@@ -11,10 +11,6 @@ VenueShield AI is an AI-powered safety platform that detects risks in real-time 
 
 ## Getting Started
 
-### Prerequisites
-
-- Node.js 18+
-- pnpm (recommended) or npm
 
 ### Installation
 
