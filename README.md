@@ -11,7 +11,6 @@ VenueShield AI is an AI-powered safety platform that detects risks in real-time 
 
 ## Getting Started
 
-
 ### Installation
 
 ```bash
