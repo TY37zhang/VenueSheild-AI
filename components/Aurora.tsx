@@ -5,6 +5,14 @@ import { useEffect, useRef } from "react"
 
 import "./Aurora.css"
 
+interface AuroraProps {
+    colorStops?: string[]
+    amplitude?: number
+    blend?: number
+    speed?: number
+    time?: number
+}
+
 const VERT = `#version 300 es
 in vec2 position;
 void main() {
@@ -111,12 +119,12 @@ void main() {
 }
 `
 
-export default function Aurora(props) {
+export default function Aurora(props: AuroraProps) {
     const { colorStops = ["#5227FF", "#7cff67", "#5227FF"], amplitude = 1.0, blend = 0.5 } = props
     const propsRef = useRef(props)
     propsRef.current = props
 
-    const ctnDom = useRef(null)
+    const ctnDom = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         const ctn = ctnDom.current
@@ -131,7 +139,7 @@ export default function Aurora(props) {
         gl.clearColor(0, 0, 0, 0)
         gl.enable(gl.BLEND)
         gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
-        gl.canvas.style.backgroundColor = "transparent"
+        ;(gl.canvas as HTMLCanvasElement).style.backgroundColor = "transparent"
 
         let program: Program | null = null
 
@@ -150,7 +158,7 @@ export default function Aurora(props) {
             delete geometry.attributes.uv
         }
 
-        const colorStopsArray = colorStops.map((hex) => {
+        const colorStopsArray = colorStops.map((hex: string) => {
             const c = new Color(hex)
             return [c.r, c.g, c.b]
         })
@@ -168,19 +176,20 @@ export default function Aurora(props) {
         })
 
         const mesh = new Mesh(gl, { geometry, program })
-        ctn.appendChild(gl.canvas)
+        ctn.appendChild(gl.canvas as HTMLCanvasElement)
 
         resize()
 
         let animateId = 0
-        const update = (t) => {
+        const update = (t: number) => {
             animateId = requestAnimationFrame(update)
             const { time = t * 0.01, speed = 1.0 } = propsRef.current
+            if (!program) return
             program.uniforms.uTime.value = time * speed * 0.1
             program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1.0
             program.uniforms.uBlend.value = propsRef.current.blend ?? blend
             const stops = propsRef.current.colorStops ?? colorStops
-            program.uniforms.uColorStops.value = stops.map((hex) => {
+            program.uniforms.uColorStops.value = stops.map((hex: string) => {
                 const c = new Color(hex)
                 return [c.r, c.g, c.b]
             })
@@ -191,8 +200,9 @@ export default function Aurora(props) {
         return () => {
             cancelAnimationFrame(animateId)
             window.removeEventListener("resize", resize)
-            if (ctn && gl.canvas.parentNode === ctn) {
-                ctn.removeChild(gl.canvas)
+            const canvas = gl.canvas as HTMLCanvasElement
+            if (ctn && canvas.parentNode === ctn) {
+                ctn.removeChild(canvas)
             }
             gl.getExtension("WEBGL_lose_context")?.loseContext()
         }

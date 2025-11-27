@@ -121,7 +121,7 @@ function AnimatedContainer({ className, delay = 0.1, children }: ViewAnimationPr
     const shouldReduceMotion = useReducedMotion()
 
     if (shouldReduceMotion) {
-        return children
+        return <>{children}</>
     }
 
     return (

@@ -9,7 +9,7 @@ interface Message {
     delay: number
 }
 
-const conversations = [
+const conversations: { title: string; messages: Message[] }[] = [
     {
         title: "Crowd Density Alert",
         messages: [
