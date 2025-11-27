@@ -1,30 +1,66 @@
-# VenueSheild AI
+# VenueShield AI
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+**Real-Time Safety Intelligence for Venues**
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/vercel/v0-cliste-website-navigation)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/O1yp5UwTJjF)
+VenueShield AI is an AI-powered safety platform that detects risks in real-time using your existing security cameras. Designed for arenas, theaters, convention centers, universities, nightclubs, and stadiums.
 
-## Overview
+![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8?style=for-the-badge&logo=tailwindcss)
+![React](https://img.shields.io/badge/React-19-61dafb?style=for-the-badge&logo=react)
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
 
-## Deployment
+## Getting Started
 
-Your project is live at:
+### Prerequisites
 
-**[https://vercel.com/vercel/v0-cliste-website-navigation](https://vercel.com/vercel/v0-cliste-website-navigation)**
+- Node.js 18+
+- pnpm (recommended) or npm
 
-## Build your app
+### Installation
 
-Continue building your app on:
+```bash
+# Install dependencies
+pnpm install
 
-**[https://v0.app/chat/O1yp5UwTJjF](https://v0.app/chat/O1yp5UwTJjF)**
+# Start the development server
+pnpm dev
+```
 
-## How It Works
+Open [http://localhost:3000](http://localhost:3000) to view the landing page.
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+Visit [http://localhost:3000/demo](http://localhost:3000/demo) to explore the interactive dashboard demo.
+
+### Backend Setup
+TBD
+
+## 📁 Project Structure
+
+```
+├── app/                    # Next.js frontend
+│   ├── demo/               # Demo dashboard page
+│   ├── globals.css         # Global styles
+│   ├── layout.tsx          # Root layout
+│   └── page.tsx            # Landing page
+├── backend/                # TBD
+│   └── README.md           # Backend docs
+├── components/
+│   ├── ui/                 # Reusable UI components (shadcn/ui)
+│   ├── hero-section.tsx
+│   ├── features-section.tsx
+│   ├── demo-dashboard.tsx
+│   └── ...
+├── lib/
+│   └── utils.ts            # Utility functions
+└── public/
+    └── images/             # Static assets
+```
+
+## 📜 Available Scripts
+
+```bash
+pnpm dev      # Start development server
+pnpm build    # Build for production
+pnpm start    # Start production server
+pnpm lint     # Run ESLint
+```
