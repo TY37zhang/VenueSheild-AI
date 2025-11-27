@@ -126,10 +126,7 @@ const createTouchTexture = (): TouchTexture => {
     }
 }
 
-const createLiquidEffect = (
-    texture: THREE.Texture,
-    opts?: { strength?: number; freq?: number }
-): Effect => {
+const createLiquidEffect = (texture: THREE.Texture, opts?: { strength?: number; freq?: number }): Effect => {
     const fragment = `
     uniform sampler2D uTexture;
     uniform float uStrength;
@@ -415,8 +412,7 @@ const PixelBlast = ({
                 t.material.dispose()
                 t.composer?.dispose()
                 t.renderer.dispose()
-                if (t.renderer.domElement.parentElement === container)
-                    container.removeChild(t.renderer.domElement)
+                if (t.renderer.domElement.parentElement === container) container.removeChild(t.renderer.domElement)
                 threeRef.current = null
             }
             const canvas = document.createElement("canvas")
@@ -524,8 +520,7 @@ const PixelBlast = ({
                 )
                 const noisePass = new EffectPass(camera, noiseEffect)
                 noisePass.renderToScreen = true
-                if (composer && composer.passes.length > 0)
-                    composer.passes.forEach((p) => (p.renderToScreen = false))
+                if (composer && composer.passes.length > 0) composer.passes.forEach((p) => (p.renderToScreen = false))
                 composer.addPass(noisePass)
             }
             if (composer) composer.setSize(renderer.domElement.width, renderer.domElement.height)
@@ -634,8 +629,7 @@ const PixelBlast = ({
             t.material.dispose()
             t.composer?.dispose()
             t.renderer.dispose()
-            if (t.renderer.domElement.parentElement === container)
-                container.removeChild(t.renderer.domElement)
+            if (t.renderer.domElement.parentElement === container) container.removeChild(t.renderer.domElement)
             threeRef.current = null
         }
     }, [

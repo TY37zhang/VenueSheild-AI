@@ -159,9 +159,7 @@ function GradualBlur(props: GradualBlurConfig) {
         const divCount = config.divCount || 5
         const increment = 100 / divCount
         const currentStrength =
-            isHovered && config.hoverIntensity
-                ? (config.strength || 2) * config.hoverIntensity
-                : config.strength || 2
+            isHovered && config.hoverIntensity ? (config.strength || 2) * config.hoverIntensity : config.strength || 2
 
         const curveFunc = CURVE_FUNCTIONS[config.curve || "linear"] || CURVE_FUNCTIONS.linear
 
