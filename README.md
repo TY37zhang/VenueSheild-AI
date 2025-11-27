@@ -59,8 +59,9 @@ TBD
 ## 📜 Available Scripts
 
 ```bash
-pnpm dev      # Start development server
-pnpm build    # Build for production
-pnpm start    # Start production server
-pnpm lint     # Run ESLint
+pnpm dev         # Start development server
+pnpm build       # Build for production
+pnpm start       # Start production server
+pnpm lint        # Run ESLint
+pnpm type-check  # Run TypeScript type checking
 ```
