@@ -25,23 +25,23 @@ export function GlassmorphismNav() {
     const handleScroll = () => {
       const featuresSection = document.querySelector("#features");
       const testimonialsSection = document.querySelector("#testimonials");
-      
+
       const navbarHeight = 80;
-      
+
       // Check if we've reached the testimonials section (end of light bg sections)
       let reachedTestimonials = false;
       if (testimonialsSection) {
         const testimonialsRect = testimonialsSection.getBoundingClientRect();
         reachedTestimonials = testimonialsRect.top <= navbarHeight;
       }
-      
+
       // Check if we've entered the features section (start of light bg sections)
       let enteredLightSections = false;
       if (featuresSection) {
         const featuresRect = featuresSection.getBoundingClientRect();
         enteredLightSections = featuresRect.top <= navbarHeight;
       }
-      
+
       // Go dark when we're in the light background sections (features + ai-team)
       // but not yet at testimonials
       const shouldBeDark = enteredLightSections && !reachedTestimonials;
@@ -106,11 +106,13 @@ export function GlassmorphismNav() {
       >
         {/* Main Navigation */}
         <div className="w-[90vw] max-w-xs md:max-w-4xl mx-auto">
-          <div className={`backdrop-blur-md rounded-full px-4 py-3 md:px-6 md:py-2 transition-all duration-500 ${
-            isScrolled 
-              ? "bg-slate-900/85 border border-slate-700/50 shadow-lg" 
-              : "bg-white/10 border border-white/20"
-          }`}>
+          <div
+            className={`backdrop-blur-md rounded-full px-4 py-3 md:px-6 md:py-2 transition-all duration-500 ${
+              isScrolled
+                ? "bg-slate-900/85 border border-slate-700/50 shadow-lg"
+                : "bg-white/10 border border-white/20"
+            }`}
+          >
             <div className="flex items-center justify-between">
               {/* Logo - Updated alt text */}
               <Link
@@ -211,11 +213,13 @@ export function GlassmorphismNav() {
                 : "opacity-0 -translate-y-8 scale-95 pointer-events-none"
             }`}
           >
-            <div className={`backdrop-blur-md rounded-2xl p-4 shadow-2xl transition-all duration-500 ${
-              isScrolled 
-                ? "bg-slate-900/85 border border-slate-700/50" 
-                : "bg-white/10 border border-white/20"
-            }`}>
+            <div
+              className={`backdrop-blur-md rounded-2xl p-4 shadow-2xl transition-all duration-500 ${
+                isScrolled
+                  ? "bg-slate-900/85 border border-slate-700/50"
+                  : "bg-white/10 border border-white/20"
+              }`}
+            >
               <div className="flex flex-col space-y-1">
                 {navigation.map((item, index) =>
                   item.href.startsWith("/") ? (

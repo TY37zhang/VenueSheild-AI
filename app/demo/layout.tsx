@@ -23,7 +23,12 @@ const navItems = [
   { href: "/demo", icon: Activity, label: "Dashboard" },
   { href: "/demo/cameras", icon: Camera, label: "Camera Feeds" },
   { href: "/demo/analytics", icon: Users, label: "Crowd Analytics" },
-  { href: "/demo/incidents", icon: AlertTriangle, label: "Incidents", badge: 2 },
+  {
+    href: "/demo/incidents",
+    icon: AlertTriangle,
+    label: "Incidents",
+    badge: 2,
+  },
   { href: "/demo/compliance", icon: Shield, label: "Compliance" },
 ];
 
@@ -294,11 +299,8 @@ export default function DemoLayout({
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto">
-          {children}
-        </main>
+        <main className="flex-1 overflow-auto">{children}</main>
       </div>
     </div>
   );
 }
-

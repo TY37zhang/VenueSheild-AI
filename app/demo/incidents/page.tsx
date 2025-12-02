@@ -18,16 +18,11 @@ import {
   X,
   MessageSquare,
   Send,
-  User,
-  Phone,
   Radio,
   Bell,
   Eye,
   Play,
-  Pause,
   MoreVertical,
-  FileText,
-  Download,
   Share2,
   Printer,
   ArrowUpRight,
@@ -37,17 +32,25 @@ import {
   CircleAlert,
   Info,
   CheckCheck,
-  XCircle,
   Timer,
-  TrendingUp,
-  TrendingDown,
 } from "lucide-react";
 import Image from "next/image";
 
 // Incident types
-type IncidentStatus = "active" | "responding" | "monitoring" | "resolved" | "escalated";
+type IncidentStatus =
+  | "active"
+  | "responding"
+  | "monitoring"
+  | "resolved"
+  | "escalated";
 type IncidentPriority = "critical" | "high" | "medium" | "low";
-type IncidentType = "crowd" | "security" | "medical" | "fire" | "technical" | "other";
+type IncidentType =
+  | "crowd"
+  | "security"
+  | "medical"
+  | "fire"
+  | "technical"
+  | "other";
 
 interface Incident {
   id: string;
@@ -80,7 +83,8 @@ const mockIncidents: Incident[] = [
   {
     id: "INC-2024-001",
     title: "High Crowd Density - Main Gate",
-    description: "AI detected crowd density at 97% capacity in Main Gate corridor. Dense crowd flow through arched passageway with security guard monitoring. Risk of crowd crush if density increases.",
+    description:
+      "AI detected crowd density at 97% capacity in Main Gate corridor. Dense crowd flow through arched passageway with security guard monitoring. Risk of crowd crush if density increases.",
     type: "crowd",
     priority: "critical",
     status: "active",
@@ -93,10 +97,30 @@ const mockIncidents: Incident[] = [
     aiConfidence: 96,
     detectionMethod: "ai",
     timeline: [
-      { time: new Date(Date.now() - 5 * 60 * 1000), action: "AI detected critical crowd density (97%)", user: "System", type: "detection" },
-      { time: new Date(Date.now() - 4 * 60 * 1000), action: "Alert dispatched to security team", user: "System", type: "response" },
-      { time: new Date(Date.now() - 3 * 60 * 1000), action: "Assigned to John Smith", user: "Control Room", type: "update" },
-      { time: new Date(Date.now() - 2 * 60 * 1000), action: "Implementing crowd flow control measures", user: "John Smith", type: "response" },
+      {
+        time: new Date(Date.now() - 5 * 60 * 1000),
+        action: "AI detected critical crowd density (97%)",
+        user: "System",
+        type: "detection",
+      },
+      {
+        time: new Date(Date.now() - 4 * 60 * 1000),
+        action: "Alert dispatched to security team",
+        user: "System",
+        type: "response",
+      },
+      {
+        time: new Date(Date.now() - 3 * 60 * 1000),
+        action: "Assigned to John Smith",
+        user: "Control Room",
+        type: "update",
+      },
+      {
+        time: new Date(Date.now() - 2 * 60 * 1000),
+        action: "Implementing crowd flow control measures",
+        user: "John Smith",
+        type: "response",
+      },
     ],
     relatedCameras: ["CAM-01", "CAM-02"],
     affectedCapacity: 487,
@@ -104,7 +128,8 @@ const mockIncidents: Incident[] = [
   {
     id: "INC-2024-002",
     title: "Crowd Gathering - Food Court",
-    description: "Unusual clustering of individuals detected near central seating area of Food Court. Multiple groups converging, potential dispute or incident.",
+    description:
+      "Unusual clustering of individuals detected near central seating area of Food Court. Multiple groups converging, potential dispute or incident.",
     type: "crowd",
     priority: "high",
     status: "responding",
@@ -117,10 +142,30 @@ const mockIncidents: Incident[] = [
     aiConfidence: 89,
     detectionMethod: "ai",
     timeline: [
-      { time: new Date(Date.now() - 12 * 60 * 1000), action: "AI detected unusual crowd gathering pattern", user: "System", type: "detection" },
-      { time: new Date(Date.now() - 11 * 60 * 1000), action: "Alert dispatched to security team", user: "System", type: "response" },
-      { time: new Date(Date.now() - 10 * 60 * 1000), action: "Assigned to Mike Chen", user: "Control Room", type: "update" },
-      { time: new Date(Date.now() - 8 * 60 * 1000), action: "En route to Food Court, ETA 1 min", user: "Mike Chen", type: "response" },
+      {
+        time: new Date(Date.now() - 12 * 60 * 1000),
+        action: "AI detected unusual crowd gathering pattern",
+        user: "System",
+        type: "detection",
+      },
+      {
+        time: new Date(Date.now() - 11 * 60 * 1000),
+        action: "Alert dispatched to security team",
+        user: "System",
+        type: "response",
+      },
+      {
+        time: new Date(Date.now() - 10 * 60 * 1000),
+        action: "Assigned to Mike Chen",
+        user: "Control Room",
+        type: "update",
+      },
+      {
+        time: new Date(Date.now() - 8 * 60 * 1000),
+        action: "En route to Food Court, ETA 1 min",
+        user: "Mike Chen",
+        type: "response",
+      },
     ],
     relatedCameras: ["CAM-06"],
     affectedCapacity: 89,
@@ -128,7 +173,8 @@ const mockIncidents: Incident[] = [
   {
     id: "INC-2024-003",
     title: "Unoccupied Area Alert - North Hallway",
-    description: "North Hallway has been completely empty for extended period. Dim lighting conditions detected. Routine patrol recommended.",
+    description:
+      "North Hallway has been completely empty for extended period. Dim lighting conditions detected. Routine patrol recommended.",
     type: "security",
     priority: "low",
     status: "monitoring",
@@ -141,10 +187,30 @@ const mockIncidents: Incident[] = [
     aiConfidence: 78,
     detectionMethod: "ai",
     timeline: [
-      { time: new Date(Date.now() - 15 * 60 * 1000), action: "AI flagged extended vacancy in corridor", user: "System", type: "detection" },
-      { time: new Date(Date.now() - 14 * 60 * 1000), action: "Low priority alert generated", user: "System", type: "response" },
-      { time: new Date(Date.now() - 10 * 60 * 1000), action: "Added to patrol route", user: "Control Room", type: "update" },
-      { time: new Date(Date.now() - 5 * 60 * 1000), action: "Scheduled for next patrol sweep", user: "Lisa Wong", type: "update" },
+      {
+        time: new Date(Date.now() - 15 * 60 * 1000),
+        action: "AI flagged extended vacancy in corridor",
+        user: "System",
+        type: "detection",
+      },
+      {
+        time: new Date(Date.now() - 14 * 60 * 1000),
+        action: "Low priority alert generated",
+        user: "System",
+        type: "response",
+      },
+      {
+        time: new Date(Date.now() - 10 * 60 * 1000),
+        action: "Added to patrol route",
+        user: "Control Room",
+        type: "update",
+      },
+      {
+        time: new Date(Date.now() - 5 * 60 * 1000),
+        action: "Scheduled for next patrol sweep",
+        user: "Lisa Wong",
+        type: "update",
+      },
     ],
     relatedCameras: ["CAM-03"],
     affectedCapacity: 0,
@@ -152,7 +218,8 @@ const mockIncidents: Incident[] = [
   {
     id: "INC-2024-004",
     title: "Crew Member Verified - Backstage",
-    description: "Single individual detected on phone near stage equipment in backstage area. Verified as authorized crew member.",
+    description:
+      "Single individual detected on phone near stage equipment in backstage area. Verified as authorized crew member.",
     type: "security",
     priority: "low",
     status: "resolved",
@@ -166,10 +233,30 @@ const mockIncidents: Incident[] = [
     aiConfidence: 94,
     detectionMethod: "ai",
     timeline: [
-      { time: new Date(Date.now() - 45 * 60 * 1000), action: "Motion detected in backstage area", user: "System", type: "detection" },
-      { time: new Date(Date.now() - 40 * 60 * 1000), action: "Security dispatched to verify", user: "Control Room", type: "response" },
-      { time: new Date(Date.now() - 25 * 60 * 1000), action: "Individual on phone identified as sound technician", user: "James Wilson", type: "update" },
-      { time: new Date(Date.now() - 20 * 60 * 1000), action: "Credentials verified, routine activity", user: "James Wilson", type: "resolution" },
+      {
+        time: new Date(Date.now() - 45 * 60 * 1000),
+        action: "Motion detected in backstage area",
+        user: "System",
+        type: "detection",
+      },
+      {
+        time: new Date(Date.now() - 40 * 60 * 1000),
+        action: "Security dispatched to verify",
+        user: "Control Room",
+        type: "response",
+      },
+      {
+        time: new Date(Date.now() - 25 * 60 * 1000),
+        action: "Individual on phone identified as sound technician",
+        user: "James Wilson",
+        type: "update",
+      },
+      {
+        time: new Date(Date.now() - 20 * 60 * 1000),
+        action: "Credentials verified, routine activity",
+        user: "James Wilson",
+        type: "resolution",
+      },
     ],
     relatedCameras: ["CAM-05"],
     affectedCapacity: 3,
@@ -177,7 +264,8 @@ const mockIncidents: Incident[] = [
   {
     id: "INC-2024-005",
     title: "Vehicle Count Verification - Parking Lot B",
-    description: "Routine vehicle count verification in Parking Lot B. Night vision cameras showing scattered vehicles with adequate spacing.",
+    description:
+      "Routine vehicle count verification in Parking Lot B. Night vision cameras showing scattered vehicles with adequate spacing.",
     type: "other",
     priority: "low",
     status: "resolved",
@@ -191,10 +279,30 @@ const mockIncidents: Incident[] = [
     aiConfidence: 0,
     detectionMethod: "manual",
     timeline: [
-      { time: new Date(Date.now() - 60 * 60 * 1000), action: "Routine vehicle count initiated", user: "Control Room", type: "detection" },
-      { time: new Date(Date.now() - 55 * 60 * 1000), action: "IR cameras captured lot overview", user: "System", type: "response" },
-      { time: new Date(Date.now() - 52 * 60 * 1000), action: "Count verified: 127 vehicles", user: "Parking Attendant", type: "update" },
-      { time: new Date(Date.now() - 50 * 60 * 1000), action: "Lot at 25% capacity, verification complete", user: "Control Room", type: "resolution" },
+      {
+        time: new Date(Date.now() - 60 * 60 * 1000),
+        action: "Routine vehicle count initiated",
+        user: "Control Room",
+        type: "detection",
+      },
+      {
+        time: new Date(Date.now() - 55 * 60 * 1000),
+        action: "IR cameras captured lot overview",
+        user: "System",
+        type: "response",
+      },
+      {
+        time: new Date(Date.now() - 52 * 60 * 1000),
+        action: "Count verified: 127 vehicles",
+        user: "Parking Attendant",
+        type: "update",
+      },
+      {
+        time: new Date(Date.now() - 50 * 60 * 1000),
+        action: "Lot at 25% capacity, verification complete",
+        user: "Control Room",
+        type: "resolution",
+      },
     ],
     relatedCameras: ["CAM-04"],
     affectedCapacity: 127,
@@ -202,7 +310,8 @@ const mockIncidents: Incident[] = [
   {
     id: "INC-2024-006",
     title: "Stadium Event Monitoring",
-    description: "Main Field event in progress. Crowd of approximately 18,500 attending. Person observed walking down aisle - routine movement.",
+    description:
+      "Main Field event in progress. Crowd of approximately 18,500 attending. Person observed walking down aisle - routine movement.",
     type: "crowd",
     priority: "low",
     status: "monitoring",
@@ -215,9 +324,24 @@ const mockIncidents: Incident[] = [
     aiConfidence: 0,
     detectionMethod: "manual",
     timeline: [
-      { time: new Date(Date.now() - 30 * 60 * 1000), action: "Event monitoring commenced", user: "Control Room", type: "detection" },
-      { time: new Date(Date.now() - 28 * 60 * 1000), action: "Crowd count updated: 18,500", user: "System", type: "response" },
-      { time: new Date(Date.now() - 25 * 60 * 1000), action: "All sectors reporting normal activity", user: "Event Security Team", type: "update" },
+      {
+        time: new Date(Date.now() - 30 * 60 * 1000),
+        action: "Event monitoring commenced",
+        user: "Control Room",
+        type: "detection",
+      },
+      {
+        time: new Date(Date.now() - 28 * 60 * 1000),
+        action: "Crowd count updated: 18,500",
+        user: "System",
+        type: "response",
+      },
+      {
+        time: new Date(Date.now() - 25 * 60 * 1000),
+        action: "All sectors reporting normal activity",
+        user: "Event Security Team",
+        type: "update",
+      },
     ],
     relatedCameras: ["CAM-02"],
     affectedCapacity: 18500,
@@ -250,10 +374,16 @@ const typeConfig = {
 
 export default function IncidentsPage() {
   const [incidents, setIncidents] = useState(mockIncidents);
-  const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
+  const [selectedIncident, setSelectedIncident] = useState<Incident | null>(
+    null,
+  );
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterStatus, setFilterStatus] = useState<IncidentStatus | "all">("all");
-  const [filterPriority, setFilterPriority] = useState<IncidentPriority | "all">("all");
+  const [filterStatus, setFilterStatus] = useState<IncidentStatus | "all">(
+    "all",
+  );
+  const [filterPriority, setFilterPriority] = useState<
+    IncidentPriority | "all"
+  >("all");
   const [filterOpen, setFilterOpen] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -278,13 +408,19 @@ export default function IncidentsPage() {
       incident.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       incident.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       incident.zone.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = filterStatus === "all" || incident.status === filterStatus;
-    const matchesPriority = filterPriority === "all" || incident.priority === filterPriority;
+    const matchesStatus =
+      filterStatus === "all" || incident.status === filterStatus;
+    const matchesPriority =
+      filterPriority === "all" || incident.priority === filterPriority;
     return matchesSearch && matchesStatus && matchesPriority;
   });
 
-  const activeCount = incidents.filter((i) => i.status === "active" || i.status === "escalated").length;
-  const respondingCount = incidents.filter((i) => i.status === "responding").length;
+  const activeCount = incidents.filter(
+    (i) => i.status === "active" || i.status === "escalated",
+  ).length;
+  const respondingCount = incidents.filter(
+    (i) => i.status === "responding",
+  ).length;
   const resolvedToday = incidents.filter((i) => i.status === "resolved").length;
 
   const handleResolve = (incidentId: string) => {
@@ -298,11 +434,16 @@ export default function IncidentsPage() {
               updatedAt: new Date(),
               timeline: [
                 ...i.timeline,
-                { time: new Date(), action: "Incident marked as resolved", user: "Operator", type: "resolution" as const },
+                {
+                  time: new Date(),
+                  action: "Incident marked as resolved",
+                  user: "Operator",
+                  type: "resolution" as const,
+                },
               ],
             }
-          : i
-      )
+          : i,
+      ),
     );
     if (selectedIncident?.id === incidentId) {
       setSelectedIncident((prev) =>
@@ -313,7 +454,7 @@ export default function IncidentsPage() {
               resolvedAt: new Date(),
               updatedAt: new Date(),
             }
-          : null
+          : null,
       );
     }
   };
@@ -329,11 +470,16 @@ export default function IncidentsPage() {
               updatedAt: new Date(),
               timeline: [
                 ...i.timeline,
-                { time: new Date(), action: "Incident escalated to critical priority", user: "Operator", type: "update" as const },
+                {
+                  time: new Date(),
+                  action: "Incident escalated to critical priority",
+                  user: "Operator",
+                  type: "update" as const,
+                },
               ],
             }
-          : i
-      )
+          : i,
+      ),
     );
   };
 
@@ -382,7 +528,10 @@ export default function IncidentsPage() {
             <AnimatePresence>
               {filterOpen && (
                 <>
-                  <div className="fixed inset-0 z-40" onClick={() => setFilterOpen(false)} />
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setFilterOpen(false)}
+                  />
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -392,7 +541,16 @@ export default function IncidentsPage() {
                     <div className="p-3 border-b border-slate-700">
                       <div className="text-xs text-slate-500 mb-2">Status</div>
                       <div className="flex flex-wrap gap-1">
-                        {(["all", "active", "responding", "monitoring", "resolved", "escalated"] as const).map((status) => (
+                        {(
+                          [
+                            "all",
+                            "active",
+                            "responding",
+                            "monitoring",
+                            "resolved",
+                            "escalated",
+                          ] as const
+                        ).map((status) => (
                           <button
                             key={status}
                             onClick={() => setFilterStatus(status)}
@@ -402,15 +560,21 @@ export default function IncidentsPage() {
                                 : "bg-slate-700 text-slate-400 hover:text-white"
                             }`}
                           >
-                            {status === "all" ? "All" : statusConfig[status].label}
+                            {status === "all"
+                              ? "All"
+                              : statusConfig[status].label}
                           </button>
                         ))}
                       </div>
                     </div>
                     <div className="p-3">
-                      <div className="text-xs text-slate-500 mb-2">Priority</div>
+                      <div className="text-xs text-slate-500 mb-2">
+                        Priority
+                      </div>
                       <div className="flex flex-wrap gap-1">
-                        {(["all", "critical", "high", "medium", "low"] as const).map((priority) => (
+                        {(
+                          ["all", "critical", "high", "medium", "low"] as const
+                        ).map((priority) => (
                           <button
                             key={priority}
                             onClick={() => setFilterPriority(priority)}
@@ -420,7 +584,9 @@ export default function IncidentsPage() {
                                 : "bg-slate-700 text-slate-400 hover:text-white"
                             }`}
                           >
-                            {priority === "all" ? "All" : priorityConfig[priority].label}
+                            {priority === "all"
+                              ? "All"
+                              : priorityConfig[priority].label}
                           </button>
                         ))}
                       </div>
@@ -462,7 +628,9 @@ export default function IncidentsPage() {
             <Radio className="w-5 h-5 text-amber-400" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-amber-400">{respondingCount}</div>
+            <div className="text-2xl font-bold text-amber-400">
+              {respondingCount}
+            </div>
             <div className="text-xs text-slate-400">In Response</div>
           </div>
         </div>
@@ -471,7 +639,9 @@ export default function IncidentsPage() {
             <CheckCheck className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-emerald-400">{resolvedToday}</div>
+            <div className="text-2xl font-bold text-emerald-400">
+              {resolvedToday}
+            </div>
             <div className="text-xs text-slate-400">Resolved Today</div>
           </div>
         </div>
@@ -489,7 +659,9 @@ export default function IncidentsPage() {
       {/* Main Content */}
       <div className="flex-1 flex gap-4 overflow-hidden">
         {/* Incidents List */}
-        <div className={`${selectedIncident ? "hidden lg:flex lg:w-1/2 xl:w-2/5" : "w-full"} flex flex-col bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden`}>
+        <div
+          className={`${selectedIncident ? "hidden lg:flex lg:w-1/2 xl:w-2/5" : "w-full"} flex flex-col bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden`}
+        >
           <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800">
             <span className="font-medium text-white">
               Incidents ({filteredIncidents.length})
@@ -502,8 +674,19 @@ export default function IncidentsPage() {
           <div className="flex-1 overflow-y-auto">
             {filteredIncidents
               .sort((a, b) => {
-                const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
-                const statusOrder = { active: 0, escalated: 1, responding: 2, monitoring: 3, resolved: 4 };
+                const priorityOrder = {
+                  critical: 0,
+                  high: 1,
+                  medium: 2,
+                  low: 3,
+                };
+                const statusOrder = {
+                  active: 0,
+                  escalated: 1,
+                  responding: 2,
+                  monitoring: 3,
+                  resolved: 4,
+                };
                 if (statusOrder[a.status] !== statusOrder[b.status]) {
                   return statusOrder[a.status] - statusOrder[b.status];
                 }
@@ -514,8 +697,6 @@ export default function IncidentsPage() {
               })
               .map((incident) => {
                 const PriorityIcon = priorityConfig[incident.priority].icon;
-                const StatusIcon = statusConfig[incident.status].icon;
-                const TypeIcon = typeConfig[incident.type].icon;
 
                 return (
                   <motion.div
@@ -535,10 +716,10 @@ export default function IncidentsPage() {
                           incident.priority === "critical"
                             ? "bg-red-500/20"
                             : incident.priority === "high"
-                            ? "bg-amber-500/20"
-                            : incident.priority === "medium"
-                            ? "bg-blue-500/20"
-                            : "bg-slate-700"
+                              ? "bg-amber-500/20"
+                              : incident.priority === "medium"
+                                ? "bg-blue-500/20"
+                                : "bg-slate-700"
                         }`}
                       >
                         <PriorityIcon
@@ -546,10 +727,10 @@ export default function IncidentsPage() {
                             incident.priority === "critical"
                               ? "text-red-400"
                               : incident.priority === "high"
-                              ? "text-amber-400"
-                              : incident.priority === "medium"
-                              ? "text-blue-400"
-                              : "text-slate-400"
+                                ? "text-amber-400"
+                                : incident.priority === "medium"
+                                  ? "text-blue-400"
+                                  : "text-slate-400"
                           }`}
                         />
                       </div>
@@ -564,12 +745,12 @@ export default function IncidentsPage() {
                               incident.status === "active"
                                 ? "bg-red-500/20 text-red-400"
                                 : incident.status === "responding"
-                                ? "bg-amber-500/20 text-amber-400"
-                                : incident.status === "monitoring"
-                                ? "bg-blue-500/20 text-blue-400"
-                                : incident.status === "escalated"
-                                ? "bg-purple-500/20 text-purple-400"
-                                : "bg-emerald-500/20 text-emerald-400"
+                                  ? "bg-amber-500/20 text-amber-400"
+                                  : incident.status === "monitoring"
+                                    ? "bg-blue-500/20 text-blue-400"
+                                    : incident.status === "escalated"
+                                      ? "bg-purple-500/20 text-purple-400"
+                                      : "bg-emerald-500/20 text-emerald-400"
                             }`}
                           >
                             {statusConfig[incident.status].label}
@@ -632,12 +813,12 @@ export default function IncidentsPage() {
                       selectedIncident.status === "active"
                         ? "bg-red-500/20 text-red-400"
                         : selectedIncident.status === "responding"
-                        ? "bg-amber-500/20 text-amber-400"
-                        : selectedIncident.status === "monitoring"
-                        ? "bg-blue-500/20 text-blue-400"
-                        : selectedIncident.status === "escalated"
-                        ? "bg-purple-500/20 text-purple-400"
-                        : "bg-emerald-500/20 text-emerald-400"
+                          ? "bg-amber-500/20 text-amber-400"
+                          : selectedIncident.status === "monitoring"
+                            ? "bg-blue-500/20 text-blue-400"
+                            : selectedIncident.status === "escalated"
+                              ? "bg-purple-500/20 text-purple-400"
+                              : "bg-emerald-500/20 text-emerald-400"
                     }`}
                   >
                     {statusConfig[selectedIncident.status].label}
@@ -671,17 +852,19 @@ export default function IncidentsPage() {
                           selectedIncident.priority === "critical"
                             ? "text-red-400"
                             : selectedIncident.priority === "high"
-                            ? "text-amber-400"
-                            : selectedIncident.priority === "medium"
-                            ? "text-blue-400"
-                            : "text-slate-400"
+                              ? "text-amber-400"
+                              : selectedIncident.priority === "medium"
+                                ? "text-blue-400"
+                                : "text-slate-400"
                         }`}
                       >
                         {(() => {
-                          const Icon = priorityConfig[selectedIncident.priority].icon;
+                          const Icon =
+                            priorityConfig[selectedIncident.priority].icon;
                           return <Icon className="w-4 h-4" />;
                         })()}
-                        {priorityConfig[selectedIncident.priority].label} Priority
+                        {priorityConfig[selectedIncident.priority].label}{" "}
+                        Priority
                       </div>
                       <span className="text-slate-600">•</span>
                       <div className="flex items-center gap-1 text-slate-400">
@@ -699,14 +882,18 @@ export default function IncidentsPage() {
                       <div className="text-2xl font-bold text-cyan-400">
                         {selectedIncident.aiConfidence}%
                       </div>
-                      <div className="text-xs text-slate-400">AI Confidence</div>
+                      <div className="text-xs text-slate-400">
+                        AI Confidence
+                      </div>
                     </div>
                   )}
                 </div>
 
                 {/* Description */}
                 <div className="bg-slate-800/50 rounded-lg p-4 mb-4">
-                  <p className="text-sm text-slate-300">{selectedIncident.description}</p>
+                  <p className="text-sm text-slate-300">
+                    {selectedIncident.description}
+                  </p>
                 </div>
 
                 {/* Location & Camera */}
@@ -759,7 +946,9 @@ export default function IncidentsPage() {
                   </div>
                   <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
                     <span className="text-xs text-white">
-                      {currentTime.toLocaleTimeString("en-US", { hour12: false })}
+                      {currentTime.toLocaleTimeString("en-US", {
+                        hour12: false,
+                      })}
                     </span>
                     <button className="p-2 bg-black/60 rounded-lg hover:bg-black/80 transition-colors">
                       <Play className="w-4 h-4" />
@@ -769,7 +958,9 @@ export default function IncidentsPage() {
 
                 {/* Assigned Team */}
                 <div className="mb-4">
-                  <div className="text-xs text-slate-500 mb-2">Assigned Personnel</div>
+                  <div className="text-xs text-slate-500 mb-2">
+                    Assigned Personnel
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     {selectedIncident.assignedTo.map((person) => (
                       <div
@@ -790,7 +981,9 @@ export default function IncidentsPage() {
 
                 {/* Timeline */}
                 <div className="mb-4">
-                  <div className="text-xs text-slate-500 mb-3">Activity Timeline</div>
+                  <div className="text-xs text-slate-500 mb-3">
+                    Activity Timeline
+                  </div>
                   <div className="space-y-0">
                     {selectedIncident.timeline.map((event, i) => (
                       <div key={i} className="flex gap-3">
@@ -800,10 +993,10 @@ export default function IncidentsPage() {
                               event.type === "detection"
                                 ? "bg-cyan-500/20"
                                 : event.type === "response"
-                                ? "bg-amber-500/20"
-                                : event.type === "resolution"
-                                ? "bg-emerald-500/20"
-                                : "bg-slate-700"
+                                  ? "bg-amber-500/20"
+                                  : event.type === "resolution"
+                                    ? "bg-emerald-500/20"
+                                    : "bg-slate-700"
                             }`}
                           >
                             {event.type === "detection" ? (
@@ -889,9 +1082,7 @@ export default function IncidentsPage() {
             </motion.div>
           )}
         </AnimatePresence>
-
       </div>
     </div>
   );
 }
-

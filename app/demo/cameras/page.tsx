@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Camera,
   Maximize2,
-  Minimize2,
   X,
   Search,
   Filter,
@@ -26,7 +25,6 @@ import {
   Circle,
   Wifi,
   WifiOff,
-  Video,
   VideoOff,
   Settings,
   Download,
@@ -222,7 +220,11 @@ const allCameras = [
 
 type LayoutType = "2x2" | "3x3" | "4x4";
 
-const layoutOptions: { value: LayoutType; icon: React.ElementType; label: string }[] = [
+const layoutOptions: {
+  value: LayoutType;
+  icon: React.ElementType;
+  label: string;
+}[] = [
   { value: "2x2", icon: Square, label: "2x2 Grid" },
   { value: "3x3", icon: Grid3X3, label: "3x3 Grid" },
   { value: "4x4", icon: LayoutGrid, label: "4x4 Grid" },
@@ -230,15 +232,21 @@ const layoutOptions: { value: LayoutType; icon: React.ElementType; label: string
 
 export default function CameraFeedsPage() {
   const [layout, setLayout] = useState<LayoutType>("3x3");
-  const [selectedCamera, setSelectedCamera] = useState<typeof allCameras[0] | null>(null);
+  const [selectedCamera, setSelectedCamera] = useState<
+    (typeof allCameras)[0] | null
+  >(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterStatus, setFilterStatus] = useState<"all" | "online" | "offline" | "alert">("all");
+  const [filterStatus, setFilterStatus] = useState<
+    "all" | "online" | "offline" | "alert"
+  >("all");
   const [filterOpen, setFilterOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [cameraStates, setCameraStates] = useState<Record<number, { occupancy: number }>>({});
+  const [cameraStates, setCameraStates] = useState<
+    Record<number, { occupancy: number }>
+  >({});
 
   // Update time
   useEffect(() => {
@@ -255,7 +263,10 @@ export default function CameraFeedsPage() {
           const baseOccupancy = cam.occupancy;
           const fluctuation = Math.floor(Math.random() * 20) - 10;
           updates[cam.id] = {
-            occupancy: Math.max(0, Math.min(cam.capacity, baseOccupancy + fluctuation)),
+            occupancy: Math.max(
+              0,
+              Math.min(cam.capacity, baseOccupancy + fluctuation),
+            ),
           };
         }
       });
@@ -264,7 +275,7 @@ export default function CameraFeedsPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const getCameraOccupancy = (camera: typeof allCameras[0]) => {
+  const getCameraOccupancy = (camera: (typeof allCameras)[0]) => {
     return cameraStates[camera.id]?.occupancy ?? camera.occupancy;
   };
 
@@ -325,7 +336,8 @@ export default function CameraFeedsPage() {
             Camera Feeds
           </h1>
           <p className="text-slate-400 text-sm mt-1">
-            {allCameras.filter((c) => c.status === "online").length} of {allCameras.length} cameras online
+            {allCameras.filter((c) => c.status === "online").length} of{" "}
+            {allCameras.length} cameras online
           </p>
         </div>
 
@@ -360,7 +372,10 @@ export default function CameraFeedsPage() {
             <AnimatePresence>
               {filterOpen && (
                 <>
-                  <div className="fixed inset-0 z-40" onClick={() => setFilterOpen(false)} />
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setFilterOpen(false)}
+                  />
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -368,10 +383,30 @@ export default function CameraFeedsPage() {
                     className="absolute right-0 top-full mt-2 w-48 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden"
                   >
                     {[
-                      { value: "all", label: "All Cameras", count: allCameras.length },
-                      { value: "online", label: "Online", count: allCameras.filter((c) => c.status === "online").length },
-                      { value: "offline", label: "Offline", count: allCameras.filter((c) => c.status === "offline").length },
-                      { value: "alert", label: "Has Alerts", count: allCameras.filter((c) => c.alertLevel !== "normal").length },
+                      {
+                        value: "all",
+                        label: "All Cameras",
+                        count: allCameras.length,
+                      },
+                      {
+                        value: "online",
+                        label: "Online",
+                        count: allCameras.filter((c) => c.status === "online")
+                          .length,
+                      },
+                      {
+                        value: "offline",
+                        label: "Offline",
+                        count: allCameras.filter((c) => c.status === "offline")
+                          .length,
+                      },
+                      {
+                        value: "alert",
+                        label: "Has Alerts",
+                        count: allCameras.filter(
+                          (c) => c.alertLevel !== "normal",
+                        ).length,
+                      },
                     ].map((option) => (
                       <button
                         key={option.value}
@@ -421,7 +456,9 @@ export default function CameraFeedsPage() {
       <div className={`grid ${getGridCols()} gap-3 flex-1 overflow-auto`}>
         {displayedCameras.map((camera) => {
           const occupancy = getCameraOccupancy(camera);
-          const occupancyPercent = Math.round((occupancy / camera.capacity) * 100);
+          const occupancyPercent = Math.round(
+            (occupancy / camera.capacity) * 100,
+          );
 
           return (
             <motion.div
@@ -450,7 +487,9 @@ export default function CameraFeedsPage() {
                 ) : (
                   <div className="absolute inset-0 bg-slate-800 flex flex-col items-center justify-center">
                     <VideoOff className="w-12 h-12 text-slate-600 mb-2" />
-                    <span className="text-slate-500 text-sm">Camera Offline</span>
+                    <span className="text-slate-500 text-sm">
+                      Camera Offline
+                    </span>
                   </div>
                 )}
 
@@ -460,7 +499,9 @@ export default function CameraFeedsPage() {
                 {/* Top bar */}
                 <div className="absolute top-0 left-0 right-0 p-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${getAlertColor(camera.alertLevel)} animate-pulse`} />
+                    <div
+                      className={`w-2 h-2 rounded-full ${getAlertColor(camera.alertLevel)} animate-pulse`}
+                    />
                     <span className="text-xs font-mono font-medium bg-black/60 px-2 py-1 rounded">
                       CAM-{camera.id.toString().padStart(2, "0")}
                     </span>
@@ -492,11 +533,17 @@ export default function CameraFeedsPage() {
                 <div className="absolute bottom-0 left-0 right-0 p-3">
                   <div className="flex items-end justify-between">
                     <div>
-                      <h3 className="font-medium text-white text-sm">{camera.name}</h3>
+                      <h3 className="font-medium text-white text-sm">
+                        {camera.name}
+                      </h3>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[11px] text-slate-400">{camera.zone}</span>
+                        <span className="text-[11px] text-slate-400">
+                          {camera.zone}
+                        </span>
                         <span className="text-[11px] text-slate-600">•</span>
-                        <span className="text-[11px] text-slate-400">{camera.resolution} @ {camera.fps}fps</span>
+                        <span className="text-[11px] text-slate-400">
+                          {camera.resolution} @ {camera.fps}fps
+                        </span>
                       </div>
                     </div>
 
@@ -507,13 +554,15 @@ export default function CameraFeedsPage() {
                             occupancyPercent > 90
                               ? "text-red-400"
                               : occupancyPercent > 70
-                              ? "text-amber-400"
-                              : "text-emerald-400"
+                                ? "text-amber-400"
+                                : "text-emerald-400"
                           }`}
                         >
                           {occupancy}
                         </div>
-                        <div className="text-[10px] text-slate-500">of {camera.capacity}</div>
+                        <div className="text-[10px] text-slate-500">
+                          of {camera.capacity}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -523,14 +572,16 @@ export default function CameraFeedsPage() {
                     <div className="mt-2 h-1 bg-slate-800 rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
-                        animate={{ width: `${Math.min(100, occupancyPercent)}%` }}
+                        animate={{
+                          width: `${Math.min(100, occupancyPercent)}%`,
+                        }}
                         transition={{ duration: 0.5 }}
                         className={`h-full rounded-full ${
                           occupancyPercent > 90
                             ? "bg-red-500"
                             : occupancyPercent > 70
-                            ? "bg-amber-500"
-                            : "bg-emerald-500"
+                              ? "bg-amber-500"
+                              : "bg-emerald-500"
                         }`}
                       />
                     </div>
@@ -557,7 +608,13 @@ export default function CameraFeedsPage() {
                       ) : (
                         <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
                       )}
-                      <span className={camera.status === "online" ? "text-emerald-400" : "text-amber-400"}>
+                      <span
+                        className={
+                          camera.status === "online"
+                            ? "text-emerald-400"
+                            : "text-amber-400"
+                        }
+                      >
                         {camera.status === "online" ? "Online" : "Offline"}
                       </span>
                     </div>
@@ -603,13 +660,22 @@ export default function CameraFeedsPage() {
               <div className="flex items-center justify-between p-4 border-b border-slate-800">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <div className={`w-2.5 h-2.5 rounded-full ${getAlertColor(selectedCamera.alertLevel)} animate-pulse`} />
-                    <span className="font-mono font-medium">CAM-{selectedCamera.id.toString().padStart(2, "0")}</span>
+                    <div
+                      className={`w-2.5 h-2.5 rounded-full ${getAlertColor(selectedCamera.alertLevel)} animate-pulse`}
+                    />
+                    <span className="font-mono font-medium">
+                      CAM-{selectedCamera.id.toString().padStart(2, "0")}
+                    </span>
                   </div>
                   <div className="h-4 w-px bg-slate-700" />
                   <div>
-                    <h2 className="font-semibold text-white">{selectedCamera.name}</h2>
-                    <p className="text-xs text-slate-400">{selectedCamera.zone} • {selectedCamera.resolution} @ {selectedCamera.fps}fps</p>
+                    <h2 className="font-semibold text-white">
+                      {selectedCamera.name}
+                    </h2>
+                    <p className="text-xs text-slate-400">
+                      {selectedCamera.zone} • {selectedCamera.resolution} @{" "}
+                      {selectedCamera.fps}fps
+                    </p>
                   </div>
                 </div>
 
@@ -647,7 +713,7 @@ export default function CameraFeedsPage() {
                     />
                     {/* Scan line effect */}
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-500/5 to-transparent animate-scan" />
-                    
+
                     {/* Crosshair overlay for PTZ */}
                     {selectedCamera.ptz && (
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-30">
@@ -659,7 +725,9 @@ export default function CameraFeedsPage() {
                     {selectedCamera.recording && (
                       <div className="absolute top-4 left-4 flex items-center gap-2 bg-red-500/20 backdrop-blur-sm px-3 py-1.5 rounded-lg">
                         <Circle className="w-3 h-3 fill-red-500 text-red-500 animate-pulse" />
-                        <span className="text-sm font-medium text-red-400">Recording</span>
+                        <span className="text-sm font-medium text-red-400">
+                          Recording
+                        </span>
                       </div>
                     )}
 
@@ -678,28 +746,40 @@ export default function CameraFeedsPage() {
 
                     {/* Occupancy indicator */}
                     <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm px-4 py-2 rounded-lg">
-                      <div className="text-xs text-slate-400 mb-1">Occupancy</div>
+                      <div className="text-xs text-slate-400 mb-1">
+                        Occupancy
+                      </div>
                       <div className="flex items-baseline gap-1">
                         <span
                           className={`text-2xl font-bold ${
-                            getCameraOccupancy(selectedCamera) / selectedCamera.capacity > 0.9
+                            getCameraOccupancy(selectedCamera) /
+                              selectedCamera.capacity >
+                            0.9
                               ? "text-red-400"
-                              : getCameraOccupancy(selectedCamera) / selectedCamera.capacity > 0.7
-                              ? "text-amber-400"
-                              : "text-emerald-400"
+                              : getCameraOccupancy(selectedCamera) /
+                                    selectedCamera.capacity >
+                                  0.7
+                                ? "text-amber-400"
+                                : "text-emerald-400"
                           }`}
                         >
                           {getCameraOccupancy(selectedCamera)}
                         </span>
-                        <span className="text-sm text-slate-500">/ {selectedCamera.capacity}</span>
+                        <span className="text-sm text-slate-500">
+                          / {selectedCamera.capacity}
+                        </span>
                       </div>
                     </div>
                   </div>
                 ) : (
                   <div className="w-full max-w-6xl aspect-video rounded-xl bg-slate-900 flex flex-col items-center justify-center">
                     <VideoOff className="w-24 h-24 text-slate-700 mb-4" />
-                    <span className="text-xl text-slate-500">Camera Offline</span>
-                    <p className="text-slate-600 mt-2">Connection lost. Attempting to reconnect...</p>
+                    <span className="text-xl text-slate-500">
+                      Camera Offline
+                    </span>
+                    <p className="text-slate-600 mt-2">
+                      Connection lost. Attempting to reconnect...
+                    </p>
                     <button className="mt-4 px-4 py-2 bg-slate-800 rounded-lg hover:bg-slate-700 transition-colors flex items-center gap-2">
                       <RotateCcw className="w-4 h-4" />
                       Retry Connection
@@ -716,10 +796,16 @@ export default function CameraFeedsPage() {
                     <button
                       onClick={() => setIsPaused(!isPaused)}
                       className={`p-2 rounded transition-colors ${
-                        isPaused ? "bg-emerald-500 text-white" : "hover:bg-slate-700"
+                        isPaused
+                          ? "bg-emerald-500 text-white"
+                          : "hover:bg-slate-700"
                       }`}
                     >
-                      {isPaused ? <Play className="w-5 h-5" /> : <Pause className="w-5 h-5" />}
+                      {isPaused ? (
+                        <Play className="w-5 h-5" />
+                      ) : (
+                        <Pause className="w-5 h-5" />
+                      )}
                     </button>
                   </div>
 
@@ -729,10 +815,16 @@ export default function CameraFeedsPage() {
                       <button
                         onClick={() => setIsMuted(!isMuted)}
                         className={`p-2 rounded transition-colors ${
-                          !isMuted ? "bg-emerald-500 text-white" : "hover:bg-slate-700"
+                          !isMuted
+                            ? "bg-emerald-500 text-white"
+                            : "hover:bg-slate-700"
                         }`}
                       >
-                        {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                        {isMuted ? (
+                          <VolumeX className="w-5 h-5" />
+                        ) : (
+                          <Volume2 className="w-5 h-5" />
+                        )}
                       </button>
                     </div>
                   )}
@@ -740,7 +832,9 @@ export default function CameraFeedsPage() {
                   {/* Zoom controls */}
                   <div className="flex items-center gap-2 bg-slate-800 rounded-lg p-1">
                     <button
-                      onClick={() => setZoomLevel(Math.max(0.5, zoomLevel - 0.25))}
+                      onClick={() =>
+                        setZoomLevel(Math.max(0.5, zoomLevel - 0.25))
+                      }
                       className="p-2 rounded hover:bg-slate-700 transition-colors disabled:opacity-50"
                       disabled={zoomLevel <= 0.5}
                     >
@@ -750,7 +844,9 @@ export default function CameraFeedsPage() {
                       {Math.round(zoomLevel * 100)}%
                     </span>
                     <button
-                      onClick={() => setZoomLevel(Math.min(3, zoomLevel + 0.25))}
+                      onClick={() =>
+                        setZoomLevel(Math.min(3, zoomLevel + 0.25))
+                      }
                       className="p-2 rounded hover:bg-slate-700 transition-colors disabled:opacity-50"
                       disabled={zoomLevel >= 3}
                     >
@@ -804,4 +900,3 @@ export default function CameraFeedsPage() {
     </div>
   );
 }
-

@@ -129,7 +129,13 @@ const forecastData = [
 // Mock zone data - mapped to actual camera locations
 const zoneData = [
   { name: "Main Gate", current: 487, max: 500, trend: "up", change: 31 },
-  { name: "Main Field", current: 18500, max: 25000, trend: "stable", change: 120 },
+  {
+    name: "Main Field",
+    current: 18500,
+    max: 25000,
+    trend: "stable",
+    change: 120,
+  },
   { name: "North Hallway", current: 0, max: 200, trend: "down", change: 0 },
   { name: "Parking Lot B", current: 127, max: 500, trend: "down", change: 15 },
   { name: "Backstage", current: 3, max: 50, trend: "stable", change: 1 },
@@ -583,9 +589,7 @@ export default function DemoDashboard() {
           <div className="p-4 space-y-3">
             {zoneData.map((zone) => (
               <div key={zone.name} className="flex items-center gap-3">
-                <div className="w-16 text-sm text-slate-400">
-                  {zone.name}
-                </div>
+                <div className="w-16 text-sm text-slate-400">{zone.name}</div>
                 <div className="flex-1">
                   <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
                     <div
@@ -602,9 +606,7 @@ export default function DemoDashboard() {
                   >
                     {zone.current}
                   </span>
-                  <span className="text-xs text-slate-500">
-                    /{zone.max}
-                  </span>
+                  <span className="text-xs text-slate-500">/{zone.max}</span>
                 </div>
                 <div className="w-12 flex items-center justify-end gap-1">
                   {zone.trend === "up" ? (

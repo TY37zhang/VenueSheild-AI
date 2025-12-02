@@ -14,9 +14,6 @@ import {
   BarChart3,
   LineChart,
   PieChart,
-  Calendar,
-  ChevronDown,
-  Filter,
   Download,
   RefreshCw,
   Zap,
@@ -184,13 +181,18 @@ export default function CrowdAnalyticsPage() {
   const [hourlyData, setHourlyData] = useState(generateHourlyData());
   const [currentOccupancy, setCurrentOccupancy] = useState(1742);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [viewMode, setViewMode] = useState<"overview" | "zones" | "flow">("overview");
+  const [viewMode, setViewMode] = useState<"overview" | "zones" | "flow">(
+    "overview",
+  );
 
   // Simulate real-time updates
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentOccupancy((prev) =>
-        Math.min(2500, Math.max(1500, prev + Math.floor(Math.random() * 100) - 50))
+        Math.min(
+          2500,
+          Math.max(1500, prev + Math.floor(Math.random() * 100) - 50),
+        ),
       );
     }, 3000);
     return () => clearInterval(interval);
@@ -326,8 +328,8 @@ export default function CrowdAnalyticsPage() {
                 occupancyPercentage > 90
                   ? "bg-red-500"
                   : occupancyPercentage > 70
-                  ? "bg-amber-500"
-                  : "bg-emerald-500"
+                    ? "bg-amber-500"
+                    : "bg-emerald-500"
               }`}
               initial={{ width: 0 }}
               animate={{ width: `${occupancyPercentage}%` }}
@@ -480,7 +482,13 @@ export default function CrowdAnalyticsPage() {
                   {/* Gradients for dynamic coloring based on capacity */}
                   <defs>
                     {/* Line gradient - vertical, changes color based on Y position */}
-                    <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient
+                      id="lineGradient"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
                       <stop offset="0%" stopColor="rgb(239, 68, 68)" />
                       <stop offset="15%" stopColor="rgb(239, 68, 68)" />
                       <stop offset="20%" stopColor="rgb(245, 158, 11)" />
@@ -488,13 +496,35 @@ export default function CrowdAnalyticsPage() {
                       <stop offset="45%" stopColor="rgb(16, 185, 129)" />
                       <stop offset="100%" stopColor="rgb(16, 185, 129)" />
                     </linearGradient>
-                    
+
                     {/* Area gradient - follows same color scheme */}
-                    <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="rgb(239, 68, 68)" stopOpacity="0.3" />
-                      <stop offset="20%" stopColor="rgb(245, 158, 11)" stopOpacity="0.25" />
-                      <stop offset="45%" stopColor="rgb(16, 185, 129)" stopOpacity="0.2" />
-                      <stop offset="100%" stopColor="rgb(16, 185, 129)" stopOpacity="0" />
+                    <linearGradient
+                      id="areaGradient"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="0%"
+                        stopColor="rgb(239, 68, 68)"
+                        stopOpacity="0.3"
+                      />
+                      <stop
+                        offset="20%"
+                        stopColor="rgb(245, 158, 11)"
+                        stopOpacity="0.25"
+                      />
+                      <stop
+                        offset="45%"
+                        stopColor="rgb(16, 185, 129)"
+                        stopOpacity="0.2"
+                      />
+                      <stop
+                        offset="100%"
+                        stopColor="rgb(16, 185, 129)"
+                        stopOpacity="0"
+                      />
                     </linearGradient>
                   </defs>
 
@@ -519,9 +549,12 @@ export default function CrowdAnalyticsPage() {
 
             {/* X-axis labels */}
             <div className="ml-12 flex justify-between text-xs text-slate-500 mt-2">
-              {hourlyData.slice(-12).filter((_, i) => i % 2 === 0).map((d, i) => (
-                <span key={i}>{d.time}</span>
-              ))}
+              {hourlyData
+                .slice(-12)
+                .filter((_, i) => i % 2 === 0)
+                .map((d, i) => (
+                  <span key={i}>{d.time}</span>
+                ))}
             </div>
           </div>
         </div>
@@ -549,19 +582,21 @@ export default function CrowdAnalyticsPage() {
                   pred.alert === "critical"
                     ? "bg-red-500/10 border-red-500/30"
                     : pred.alert === "warning"
-                    ? "bg-amber-500/10 border-amber-500/30"
-                    : "bg-slate-800/50 border-slate-700"
+                      ? "bg-amber-500/10 border-amber-500/30"
+                      : "bg-slate-800/50 border-slate-700"
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-white">{pred.time}</span>
+                  <span className="text-sm font-medium text-white">
+                    {pred.time}
+                  </span>
                   <span
                     className={`text-xs px-2 py-0.5 rounded-full ${
                       pred.confidence >= 90
                         ? "bg-emerald-500/20 text-emerald-400"
                         : pred.confidence >= 80
-                        ? "bg-amber-500/20 text-amber-400"
-                        : "bg-slate-700 text-slate-400"
+                          ? "bg-amber-500/20 text-amber-400"
+                          : "bg-slate-700 text-slate-400"
                     }`}
                   >
                     {pred.confidence}% conf.
@@ -577,11 +612,15 @@ export default function CrowdAnalyticsPage() {
                   {pred.alert && (
                     <div
                       className={`flex items-center gap-1 text-xs ${
-                        pred.alert === "critical" ? "text-red-400" : "text-amber-400"
+                        pred.alert === "critical"
+                          ? "text-red-400"
+                          : "text-amber-400"
                       }`}
                     >
                       <AlertTriangle className="w-3 h-3" />
-                      {pred.alert === "critical" ? "Over capacity" : "High density"}
+                      {pred.alert === "critical"
+                        ? "Over capacity"
+                        : "High density"}
                     </div>
                   )}
                 </div>
@@ -591,10 +630,12 @@ export default function CrowdAnalyticsPage() {
                       pred.occupancy / 2500 > 0.9
                         ? "bg-red-500"
                         : pred.occupancy / 2500 > 0.75
-                        ? "bg-amber-500"
-                        : "bg-emerald-500"
+                          ? "bg-amber-500"
+                          : "bg-emerald-500"
                     }`}
-                    style={{ width: `${Math.min(100, (pred.occupancy / 2500) * 100)}%` }}
+                    style={{
+                      width: `${Math.min(100, (pred.occupancy / 2500) * 100)}%`,
+                    }}
                   />
                 </div>
               </motion.div>
@@ -632,7 +673,9 @@ export default function CrowdAnalyticsPage() {
                       ? "bg-slate-800 border-emerald-500/50"
                       : "bg-slate-800/50 border-slate-700 hover:border-slate-600"
                   }`}
-                  onClick={() => setSelectedZone(selectedZone === zone.id ? null : zone.id)}
+                  onClick={() =>
+                    setSelectedZone(selectedZone === zone.id ? null : zone.id)
+                  }
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
@@ -641,14 +684,16 @@ export default function CrowdAnalyticsPage() {
                           zone.density > 90
                             ? "bg-red-500/20 text-red-400"
                             : zone.density > 70
-                            ? "bg-amber-500/20 text-amber-400"
-                            : "bg-emerald-500/20 text-emerald-400"
+                              ? "bg-amber-500/20 text-amber-400"
+                              : "bg-emerald-500/20 text-emerald-400"
                         }`}
                       >
                         {zone.id}
                       </div>
                       <div>
-                        <div className="font-medium text-white">{zone.name}</div>
+                        <div className="font-medium text-white">
+                          {zone.name}
+                        </div>
                         <div className="text-xs text-slate-400">
                           Peak: {zone.peakHour} • Avg dwell: {zone.avgDwell}
                         </div>
@@ -661,13 +706,15 @@ export default function CrowdAnalyticsPage() {
                             zone.density > 90
                               ? "text-red-400"
                               : zone.density > 70
-                              ? "text-amber-400"
-                              : "text-emerald-400"
+                                ? "text-amber-400"
+                                : "text-emerald-400"
                           }`}
                         >
                           {zone.current}
                         </span>
-                        <span className="text-sm text-slate-500">/{zone.max}</span>
+                        <span className="text-sm text-slate-500">
+                          /{zone.max}
+                        </span>
                       </div>
                       <div className="flex items-center gap-1 text-xs mt-0.5">
                         {zone.trend === "up" ? (
@@ -678,7 +725,9 @@ export default function CrowdAnalyticsPage() {
                         ) : zone.trend === "down" ? (
                           <>
                             <TrendingDown className="w-3 h-3 text-emerald-400" />
-                            <span className="text-emerald-400">-{zone.change}</span>
+                            <span className="text-emerald-400">
+                              -{zone.change}
+                            </span>
                           </>
                         ) : (
                           <>
@@ -700,8 +749,8 @@ export default function CrowdAnalyticsPage() {
                         zone.density > 90
                           ? "bg-red-500"
                           : zone.density > 70
-                          ? "bg-amber-500"
-                          : "bg-emerald-500"
+                            ? "bg-amber-500"
+                            : "bg-emerald-500"
                       }`}
                     />
                   </div>
@@ -716,16 +765,28 @@ export default function CrowdAnalyticsPage() {
                         className="mt-4 pt-4 border-t border-slate-700 grid grid-cols-3 gap-4"
                       >
                         <div>
-                          <div className="text-xs text-slate-500 mb-1">Density</div>
-                          <div className="text-lg font-semibold text-white">{zone.density}%</div>
+                          <div className="text-xs text-slate-500 mb-1">
+                            Density
+                          </div>
+                          <div className="text-lg font-semibold text-white">
+                            {zone.density}%
+                          </div>
                         </div>
                         <div>
-                          <div className="text-xs text-slate-500 mb-1">Flow Rate</div>
-                          <div className="text-lg font-semibold text-white">{zone.flowRate}/min</div>
+                          <div className="text-xs text-slate-500 mb-1">
+                            Flow Rate
+                          </div>
+                          <div className="text-lg font-semibold text-white">
+                            {zone.flowRate}/min
+                          </div>
                         </div>
                         <div>
-                          <div className="text-xs text-slate-500 mb-1">Avg Dwell</div>
-                          <div className="text-lg font-semibold text-white">{zone.avgDwell}</div>
+                          <div className="text-xs text-slate-500 mb-1">
+                            Avg Dwell
+                          </div>
+                          <div className="text-lg font-semibold text-white">
+                            {zone.avgDwell}
+                          </div>
                         </div>
                       </motion.div>
                     )}
@@ -755,7 +816,9 @@ export default function CrowdAnalyticsPage() {
               <div className="space-y-2">
                 {demographics.ageGroups.map((group) => (
                   <div key={group.label} className="flex items-center gap-3">
-                    <span className="w-12 text-xs text-slate-400">{group.label}</span>
+                    <span className="w-12 text-xs text-slate-400">
+                      {group.label}
+                    </span>
                     <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
@@ -765,7 +828,9 @@ export default function CrowdAnalyticsPage() {
                         style={{ backgroundColor: group.color }}
                       />
                     </div>
-                    <span className="w-8 text-xs text-slate-400 text-right">{group.value}%</span>
+                    <span className="w-8 text-xs text-slate-400 text-right">
+                      {group.value}%
+                    </span>
                   </div>
                 ))}
               </div>
@@ -780,8 +845,12 @@ export default function CrowdAnalyticsPage() {
                     key={group.label}
                     className="bg-slate-800/50 border border-slate-700 rounded-lg p-3 text-center"
                   >
-                    <div className="text-2xl font-bold text-white">{group.value}%</div>
-                    <div className="text-xs text-slate-400 mt-1">{group.label}</div>
+                    <div className="text-2xl font-bold text-white">
+                      {group.value}%
+                    </div>
+                    <div className="text-xs text-slate-400 mt-1">
+                      {group.label}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -822,8 +891,12 @@ export default function CrowdAnalyticsPage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-lg font-bold text-white">{flow.volume}</div>
-                  <div className="text-xs text-slate-400">{flow.percentage}%</div>
+                  <div className="text-lg font-bold text-white">
+                    {flow.volume}
+                  </div>
+                  <div className="text-xs text-slate-400">
+                    {flow.percentage}%
+                  </div>
                 </div>
               </div>
             ))}
@@ -844,7 +917,11 @@ export default function CrowdAnalyticsPage() {
             {/* Bar chart representation */}
             <div className="flex items-end justify-between h-40 gap-1">
               {hourlyData.slice(-8).map((data, i) => {
-                const maxVal = Math.max(...hourlyData.slice(-8).map((d) => Math.max(d.entries, d.exits)));
+                const maxVal = Math.max(
+                  ...hourlyData
+                    .slice(-8)
+                    .map((d) => Math.max(d.entries, d.exits)),
+                );
                 const entryHeight = (data.entries / maxVal) * 100;
                 const exitHeight = (data.exits / maxVal) * 100;
 
@@ -872,7 +949,9 @@ export default function CrowdAnalyticsPage() {
             {/* X-axis labels */}
             <div className="flex justify-between mt-2 text-xs text-slate-500">
               {hourlyData.slice(-8).map((d, i) => (
-                <span key={i} className="flex-1 text-center">{d.time}</span>
+                <span key={i} className="flex-1 text-center">
+                  {d.time}
+                </span>
               ))}
             </div>
 
@@ -905,4 +984,3 @@ export default function CrowdAnalyticsPage() {
     </div>
   );
 }
-

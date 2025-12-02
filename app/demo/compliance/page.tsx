@@ -12,11 +12,9 @@ import {
   FileText,
   Download,
   RefreshCw,
-  ChevronDown,
   ChevronRight,
   Eye,
   Upload,
-  Filter,
   Search,
   Award,
   Building,
@@ -24,26 +22,25 @@ import {
   Flame,
   Accessibility,
   Lock,
-  Camera,
-  Bell,
-  TrendingUp,
-  TrendingDown,
-  BarChart3,
-  PieChart,
-  ExternalLink,
-  Printer,
-  Mail,
   History,
-  Settings,
   Zap,
-  CircleDot,
-  AlertCircle,
   Info,
 } from "lucide-react";
 
 // Compliance categories
-type ComplianceCategory = "fire" | "crowd" | "accessibility" | "security" | "health" | "structural";
-type ComplianceStatus = "compliant" | "warning" | "violation" | "pending" | "expired";
+type ComplianceCategory =
+  | "fire"
+  | "crowd"
+  | "accessibility"
+  | "security"
+  | "health"
+  | "structural";
+type ComplianceStatus =
+  | "compliant"
+  | "warning"
+  | "violation"
+  | "pending"
+  | "expired";
 
 interface ComplianceItem {
   id: string;
@@ -86,7 +83,8 @@ const complianceItems: ComplianceItem[] = [
   {
     id: "FIRE-001",
     title: "Emergency Exit Accessibility",
-    description: "All emergency exits must be unobstructed and clearly marked at all times",
+    description:
+      "All emergency exits must be unobstructed and clearly marked at all times",
     category: "fire",
     status: "compliant",
     requirement: "100% clear",
@@ -99,7 +97,8 @@ const complianceItems: ComplianceItem[] = [
   {
     id: "FIRE-002",
     title: "Fire Extinguisher Inspection",
-    description: "All fire extinguishers must be inspected monthly and serviced annually",
+    description:
+      "All fire extinguishers must be inspected monthly and serviced annually",
     category: "fire",
     status: "compliant",
     requirement: "Monthly inspection",
@@ -123,7 +122,8 @@ const complianceItems: ComplianceItem[] = [
   {
     id: "CROWD-001",
     title: "Maximum Occupancy Limit",
-    description: "Total venue occupancy must not exceed licensed capacity of 30,000",
+    description:
+      "Total venue occupancy must not exceed licensed capacity of 30,000",
     category: "crowd",
     status: "compliant",
     requirement: "≤ 30,000",
@@ -347,7 +347,11 @@ const auditHistory: AuditRecord[] = [
 const categoryConfig = {
   fire: { icon: Flame, label: "Fire Safety", color: "orange" },
   crowd: { icon: Users, label: "Crowd Management", color: "blue" },
-  accessibility: { icon: Accessibility, label: "Accessibility", color: "purple" },
+  accessibility: {
+    icon: Accessibility,
+    label: "Accessibility",
+    color: "purple",
+  },
   security: { icon: Lock, label: "Security", color: "slate" },
   health: { icon: Shield, label: "Health & Safety", color: "emerald" },
   structural: { icon: Building, label: "Structural", color: "cyan" },
@@ -362,10 +366,14 @@ const statusConfig = {
 };
 
 export default function CompliancePage() {
-  const [selectedCategory, setSelectedCategory] = useState<ComplianceCategory | "all">("all");
+  const [selectedCategory, setSelectedCategory] = useState<
+    ComplianceCategory | "all"
+  >("all");
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"requirements" | "certificates" | "audits">("requirements");
+  const [activeTab, setActiveTab] = useState<
+    "requirements" | "certificates" | "audits"
+  >("requirements");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -381,12 +389,13 @@ export default function CompliancePage() {
 
   const toggleExpand = (id: string) => {
     setExpandedItems((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     );
   };
 
   const filteredItems = complianceItems.filter((item) => {
-    const matchesCategory = selectedCategory === "all" || item.category === selectedCategory;
+    const matchesCategory =
+      selectedCategory === "all" || item.category === selectedCategory;
     const matchesSearch =
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.id.toLowerCase().includes(searchQuery.toLowerCase());
@@ -411,7 +420,9 @@ export default function CompliancePage() {
   };
 
   const getDaysUntil = (date: Date) => {
-    const days = Math.ceil((date.getTime() - currentTime.getTime()) / (1000 * 60 * 60 * 24));
+    const days = Math.ceil(
+      (date.getTime() - currentTime.getTime()) / (1000 * 60 * 60 * 24),
+    );
     return days;
   };
 
@@ -436,7 +447,9 @@ export default function CompliancePage() {
               isRefreshing ? "animate-pulse" : ""
             }`}
           >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
+            <RefreshCw
+              className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
+            />
             <span className="text-sm">Refresh</span>
           </button>
           <button className="flex items-center gap-2 px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg hover:bg-slate-700 transition-colors">
@@ -474,8 +487,8 @@ export default function CompliancePage() {
                     overallScore >= 90
                       ? "text-emerald-500"
                       : overallScore >= 70
-                      ? "text-amber-500"
-                      : "text-red-500"
+                        ? "text-amber-500"
+                        : "text-red-500"
                   }
                 />
               </svg>
@@ -485,8 +498,8 @@ export default function CompliancePage() {
                     overallScore >= 90
                       ? "text-emerald-400"
                       : overallScore >= 70
-                      ? "text-amber-400"
-                      : "text-red-400"
+                        ? "text-amber-400"
+                        : "text-red-400"
                   }`}
                 >
                   {overallScore}%
@@ -495,7 +508,9 @@ export default function CompliancePage() {
               </div>
             </div>
             <div className="mt-4">
-              <div className="text-sm font-medium text-white">Overall Score</div>
+              <div className="text-sm font-medium text-white">
+                Overall Score
+              </div>
               <div className="text-xs text-slate-400 mt-1">
                 {stats.compliant} of {stats.total} requirements met
               </div>
@@ -511,7 +526,9 @@ export default function CompliancePage() {
                 <CheckCircle className="w-6 h-6 text-emerald-400" />
               </div>
               <div>
-                <div className="text-3xl font-bold text-emerald-400">{stats.compliant}</div>
+                <div className="text-3xl font-bold text-emerald-400">
+                  {stats.compliant}
+                </div>
                 <div className="text-sm text-slate-400">Compliant</div>
               </div>
             </div>
@@ -523,7 +540,9 @@ export default function CompliancePage() {
                 <AlertTriangle className="w-6 h-6 text-amber-400" />
               </div>
               <div>
-                <div className="text-3xl font-bold text-amber-400">{stats.warnings}</div>
+                <div className="text-3xl font-bold text-amber-400">
+                  {stats.warnings}
+                </div>
                 <div className="text-sm text-slate-400">Warnings</div>
               </div>
             </div>
@@ -535,7 +554,9 @@ export default function CompliancePage() {
                 <XCircle className="w-6 h-6 text-red-400" />
               </div>
               <div>
-                <div className="text-3xl font-bold text-red-400">{stats.violations}</div>
+                <div className="text-3xl font-bold text-red-400">
+                  {stats.violations}
+                </div>
                 <div className="text-sm text-slate-400">Violations</div>
               </div>
             </div>
@@ -575,7 +596,9 @@ export default function CompliancePage() {
                 <History className="w-6 h-6 text-cyan-400" />
               </div>
               <div>
-                <div className="text-3xl font-bold text-cyan-400">{auditHistory.length}</div>
+                <div className="text-3xl font-bold text-cyan-400">
+                  {auditHistory.length}
+                </div>
                 <div className="text-sm text-slate-400">Audits YTD</div>
               </div>
             </div>
@@ -586,9 +609,24 @@ export default function CompliancePage() {
       {/* Tabs */}
       <div className="flex items-center gap-2 mb-4 border-b border-slate-800 pb-4">
         {[
-          { id: "requirements", label: "Requirements", icon: FileText, count: complianceItems.length },
-          { id: "certificates", label: "Certificates", icon: Award, count: certificates.length },
-          { id: "audits", label: "Audit History", icon: History, count: auditHistory.length },
+          {
+            id: "requirements",
+            label: "Requirements",
+            icon: FileText,
+            count: complianceItems.length,
+          },
+          {
+            id: "certificates",
+            label: "Certificates",
+            icon: Award,
+            count: certificates.length,
+          },
+          {
+            id: "audits",
+            label: "Audit History",
+            icon: History,
+            count: auditHistory.length,
+          },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -601,7 +639,9 @@ export default function CompliancePage() {
           >
             <tab.icon className="w-4 h-4" />
             <span className="text-sm font-medium">{tab.label}</span>
-            <span className="text-xs px-2 py-0.5 bg-slate-700 rounded-full">{tab.count}</span>
+            <span className="text-xs px-2 py-0.5 bg-slate-700 rounded-full">
+              {tab.count}
+            </span>
           </button>
         ))}
       </div>
@@ -633,23 +673,25 @@ export default function CompliancePage() {
               >
                 All
               </button>
-              {(Object.keys(categoryConfig) as ComplianceCategory[]).map((cat) => {
-                const config = categoryConfig[cat];
-                return (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors ${
-                      selectedCategory === cat
-                        ? "bg-emerald-500 text-white"
-                        : "bg-slate-800 text-slate-400 hover:text-white"
-                    }`}
-                  >
-                    <config.icon className="w-3.5 h-3.5" />
-                    {config.label}
-                  </button>
-                );
-              })}
+              {(Object.keys(categoryConfig) as ComplianceCategory[]).map(
+                (cat) => {
+                  const config = categoryConfig[cat];
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => setSelectedCategory(cat)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                        selectedCategory === cat
+                          ? "bg-emerald-500 text-white"
+                          : "bg-slate-800 text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      <config.icon className="w-3.5 h-3.5" />
+                      {config.label}
+                    </button>
+                  );
+                },
+              )}
             </div>
           </div>
 
@@ -668,8 +710,8 @@ export default function CompliancePage() {
                     item.status === "violation"
                       ? "border-red-500/50"
                       : item.status === "warning"
-                      ? "border-amber-500/50"
-                      : "border-slate-800"
+                        ? "border-amber-500/50"
+                        : "border-slate-800"
                   }`}
                 >
                   <div
@@ -682,8 +724,8 @@ export default function CompliancePage() {
                           item.status === "compliant"
                             ? "bg-emerald-500/20"
                             : item.status === "warning"
-                            ? "bg-amber-500/20"
-                            : "bg-red-500/20"
+                              ? "bg-amber-500/20"
+                              : "bg-red-500/20"
                         }`}
                       >
                         <StatusIcon
@@ -691,22 +733,24 @@ export default function CompliancePage() {
                             item.status === "compliant"
                               ? "text-emerald-400"
                               : item.status === "warning"
-                              ? "text-amber-400"
-                              : "text-red-400"
+                                ? "text-amber-400"
+                                : "text-red-400"
                           }`}
                         />
                       </div>
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xs font-mono text-slate-500">{item.id}</span>
+                          <span className="text-xs font-mono text-slate-500">
+                            {item.id}
+                          </span>
                           <span
                             className={`text-xs px-1.5 py-0.5 rounded ${
                               item.status === "compliant"
                                 ? "bg-emerald-500/20 text-emerald-400"
                                 : item.status === "warning"
-                                ? "bg-amber-500/20 text-amber-400"
-                                : "bg-red-500/20 text-red-400"
+                                  ? "bg-amber-500/20 text-amber-400"
+                                  : "bg-red-500/20 text-red-400"
                             }`}
                           >
                             {statusConfig[item.status].label}
@@ -732,7 +776,10 @@ export default function CompliancePage() {
                           </div>
                           {item.currentValue && (
                             <div className="text-slate-300">
-                              Current: <span className="font-medium">{item.currentValue}</span>
+                              Current:{" "}
+                              <span className="font-medium">
+                                {item.currentValue}
+                              </span>
                             </div>
                           )}
                         </div>
@@ -755,27 +802,41 @@ export default function CompliancePage() {
                         className="border-t border-slate-800"
                       >
                         <div className="p-4 bg-slate-800/30">
-                          <p className="text-sm text-slate-300 mb-4">{item.description}</p>
+                          <p className="text-sm text-slate-300 mb-4">
+                            {item.description}
+                          </p>
 
                           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                             <div>
-                              <div className="text-xs text-slate-500 mb-1">Requirement</div>
-                              <div className="text-sm font-medium text-white">{item.requirement}</div>
+                              <div className="text-xs text-slate-500 mb-1">
+                                Requirement
+                              </div>
+                              <div className="text-sm font-medium text-white">
+                                {item.requirement}
+                              </div>
                             </div>
                             {item.threshold && (
                               <div>
-                                <div className="text-xs text-slate-500 mb-1">Threshold</div>
-                                <div className="text-sm font-medium text-white">{item.threshold}</div>
+                                <div className="text-xs text-slate-500 mb-1">
+                                  Threshold
+                                </div>
+                                <div className="text-sm font-medium text-white">
+                                  {item.threshold}
+                                </div>
                               </div>
                             )}
                             <div>
-                              <div className="text-xs text-slate-500 mb-1">Next Check</div>
+                              <div className="text-xs text-slate-500 mb-1">
+                                Next Check
+                              </div>
                               <div className="text-sm font-medium text-white">
                                 {formatDate(item.nextCheck)}
                               </div>
                             </div>
                             <div>
-                              <div className="text-xs text-slate-500 mb-1">Monitoring</div>
+                              <div className="text-xs text-slate-500 mb-1">
+                                Monitoring
+                              </div>
                               <div className="text-sm font-medium text-white">
                                 {item.automated ? "Automated" : "Manual"}
                               </div>
@@ -786,14 +847,18 @@ export default function CompliancePage() {
                             <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 mb-4">
                               <div className="flex items-start gap-2">
                                 <Info className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-                                <p className="text-sm text-amber-200">{item.notes}</p>
+                                <p className="text-sm text-amber-200">
+                                  {item.notes}
+                                </p>
                               </div>
                             </div>
                           )}
 
                           {item.documents && item.documents.length > 0 && (
                             <div>
-                              <div className="text-xs text-slate-500 mb-2">Related Documents</div>
+                              <div className="text-xs text-slate-500 mb-2">
+                                Related Documents
+                              </div>
                               <div className="flex flex-wrap gap-2">
                                 {item.documents.map((doc) => (
                                   <button
@@ -834,8 +899,8 @@ export default function CompliancePage() {
                   cert.status === "expired"
                     ? "border-red-500/50"
                     : cert.status === "expiring"
-                    ? "border-amber-500/50"
-                    : "border-slate-800"
+                      ? "border-amber-500/50"
+                      : "border-slate-800"
                 }`}
               >
                 <div className="flex items-start gap-4">
@@ -844,8 +909,8 @@ export default function CompliancePage() {
                       cert.status === "valid"
                         ? "bg-emerald-500/20"
                         : cert.status === "expiring"
-                        ? "bg-amber-500/20"
-                        : "bg-red-500/20"
+                          ? "bg-amber-500/20"
+                          : "bg-red-500/20"
                     }`}
                   >
                     <Award
@@ -853,8 +918,8 @@ export default function CompliancePage() {
                         cert.status === "valid"
                           ? "text-emerald-400"
                           : cert.status === "expiring"
-                          ? "text-amber-400"
-                          : "text-red-400"
+                            ? "text-amber-400"
+                            : "text-red-400"
                       }`}
                     />
                   </div>
@@ -866,15 +931,15 @@ export default function CompliancePage() {
                           cert.status === "valid"
                             ? "bg-emerald-500/20 text-emerald-400"
                             : cert.status === "expiring"
-                            ? "bg-amber-500/20 text-amber-400"
-                            : "bg-red-500/20 text-red-400"
+                              ? "bg-amber-500/20 text-amber-400"
+                              : "bg-red-500/20 text-red-400"
                         }`}
                       >
                         {cert.status === "valid"
                           ? "Valid"
                           : cert.status === "expiring"
-                          ? `Expires in ${daysUntil} days`
-                          : "Expired"}
+                            ? `Expires in ${daysUntil} days`
+                            : "Expired"}
                       </span>
                     </div>
 
@@ -915,12 +980,16 @@ export default function CompliancePage() {
                       <div className="flex items-center gap-2">
                         <AlertTriangle
                           className={`w-4 h-4 ${
-                            cert.status === "expired" ? "text-red-400" : "text-amber-400"
+                            cert.status === "expired"
+                              ? "text-red-400"
+                              : "text-amber-400"
                           }`}
                         />
                         <span
                           className={`text-sm ${
-                            cert.status === "expired" ? "text-red-300" : "text-amber-300"
+                            cert.status === "expired"
+                              ? "text-red-300"
+                              : "text-amber-300"
                           }`}
                         >
                           {cert.status === "expired"
@@ -942,7 +1011,9 @@ export default function CompliancePage() {
           <div className="bg-slate-900/50 border border-dashed border-slate-700 rounded-xl p-8 flex flex-col items-center justify-center text-center hover:border-slate-600 transition-colors cursor-pointer">
             <Upload className="w-10 h-10 text-slate-600 mb-3" />
             <p className="text-slate-400 text-sm">Upload New Certificate</p>
-            <p className="text-slate-600 text-xs mt-1">PDF, JPG or PNG up to 10MB</p>
+            <p className="text-slate-600 text-xs mt-1">
+              PDF, JPG or PNG up to 10MB
+            </p>
           </div>
         </div>
       )}
@@ -958,11 +1029,15 @@ export default function CompliancePage() {
                     <th className="text-left text-xs font-medium text-slate-400 px-4 py-3">
                       Audit Type
                     </th>
-                    <th className="text-left text-xs font-medium text-slate-400 px-4 py-3">Date</th>
+                    <th className="text-left text-xs font-medium text-slate-400 px-4 py-3">
+                      Date
+                    </th>
                     <th className="text-left text-xs font-medium text-slate-400 px-4 py-3">
                       Auditor
                     </th>
-                    <th className="text-left text-xs font-medium text-slate-400 px-4 py-3">Score</th>
+                    <th className="text-left text-xs font-medium text-slate-400 px-4 py-3">
+                      Score
+                    </th>
                     <th className="text-left text-xs font-medium text-slate-400 px-4 py-3">
                       Findings
                     </th>
@@ -983,13 +1058,17 @@ export default function CompliancePage() {
                       }`}
                     >
                       <td className="px-4 py-4">
-                        <div className="font-medium text-white text-sm">{audit.type}</div>
+                        <div className="font-medium text-white text-sm">
+                          {audit.type}
+                        </div>
                         <div className="text-xs text-slate-500">{audit.id}</div>
                       </td>
                       <td className="px-4 py-4 text-sm text-slate-300">
                         {formatDate(audit.date)}
                       </td>
-                      <td className="px-4 py-4 text-sm text-slate-300">{audit.auditor}</td>
+                      <td className="px-4 py-4 text-sm text-slate-300">
+                        {audit.auditor}
+                      </td>
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-2">
                           <div
@@ -997,8 +1076,8 @@ export default function CompliancePage() {
                               audit.score >= 90
                                 ? "text-emerald-400"
                                 : audit.score >= 80
-                                ? "text-amber-400"
-                                : "text-red-400"
+                                  ? "text-amber-400"
+                                  : "text-red-400"
                             }`}
                           >
                             {audit.score}
@@ -1009,8 +1088,8 @@ export default function CompliancePage() {
                                 audit.score >= 90
                                   ? "bg-emerald-500"
                                   : audit.score >= 80
-                                  ? "bg-amber-500"
-                                  : "bg-red-500"
+                                    ? "bg-amber-500"
+                                    : "bg-red-500"
                               }`}
                               style={{ width: `${audit.score}%` }}
                             />
@@ -1018,7 +1097,9 @@ export default function CompliancePage() {
                         </div>
                       </td>
                       <td className="px-4 py-4">
-                        <span className="text-sm text-slate-300">{audit.findings} issues</span>
+                        <span className="text-sm text-slate-300">
+                          {audit.findings} issues
+                        </span>
                       </td>
                       <td className="px-4 py-4">
                         <span
@@ -1026,8 +1107,8 @@ export default function CompliancePage() {
                             audit.status === "passed"
                               ? "bg-emerald-500/20 text-emerald-400"
                               : audit.status === "conditional"
-                              ? "bg-amber-500/20 text-amber-400"
-                              : "bg-red-500/20 text-red-400"
+                                ? "bg-amber-500/20 text-amber-400"
+                                : "bg-red-500/20 text-red-400"
                           }`}
                         >
                           {audit.status === "passed" ? (
@@ -1037,7 +1118,8 @@ export default function CompliancePage() {
                           ) : (
                             <XCircle className="w-3 h-3" />
                           )}
-                          {audit.status.charAt(0).toUpperCase() + audit.status.slice(1)}
+                          {audit.status.charAt(0).toUpperCase() +
+                            audit.status.slice(1)}
                         </span>
                       </td>
                       <td className="px-4 py-4 text-right">
@@ -1069,4 +1151,3 @@ export default function CompliancePage() {
     </div>
   );
 }
-
