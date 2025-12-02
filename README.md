@@ -49,27 +49,50 @@ Visit [http://localhost:3000/demo](http://localhost:3000/demo) to explore the in
 ```
 ├── app/
 │   ├── demo/
-│   │   ├── page.tsx           # Main dashboard
-│   │   ├── layout.tsx         # Shared demo layout with sidebar
-│   │   ├── cameras/           # Camera feeds page
-│   │   ├── analytics/         # Crowd analytics page
-│   │   ├── incidents/         # Incident management page
-│   │   └── compliance/        # Compliance dashboard page
-│   ├── globals.css            # Global styles
-│   ├── layout.tsx             # Root layout
-│   └── page.tsx               # Landing page
+│   │   ├── layout.tsx              # Shared layout with sidebar navigation
+│   │   ├── page.tsx                # Main dashboard overview
+│   │   ├── analytics/page.tsx      # Crowd analytics & predictions
+│   │   ├── cameras/page.tsx        # Camera feeds grid & fullscreen
+│   │   ├── compliance/page.tsx     # Compliance tracking dashboard
+│   │   └── incidents/page.tsx      # Incident management system
+│   ├── globals.css                 # Global styles
+│   ├── layout.tsx                  # Root layout
+│   └── page.tsx                    # Landing page
 ├── components/
-│   ├── ui/                    # Reusable UI components (shadcn/ui)
-│   ├── demo-dashboard.tsx     # Dashboard content component
-│   ├── hero-section.tsx       # Landing page hero
-│   ├── features-section.tsx   # Landing page features
-│   └── ...                    # Other landing page sections
+│   ├── ui/                         # Reusable UI (shadcn/ui)
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── select.tsx
+│   │   ├── slider.tsx
+│   │   └── testimonials-column.tsx
+│   ├── demo-dashboard.tsx          # Dashboard content
+│   ├── hero-section.tsx            # Landing hero
+│   ├── features-section.tsx        # Features grid
+│   ├── ai-team-section.tsx         # AI agents showcase
+│   ├── problem-solution-section.tsx
+│   ├── roi-calculator-section.tsx  # ROI calculator
+│   ├── testimonials-section.tsx
+│   ├── cta-section.tsx
+│   ├── footer.tsx
+│   ├── glassmorphism-nav.tsx       # Main navigation
+│   ├── theme-provider.tsx
+│   ├── Aurora.tsx                  # Background effects
+│   ├── GradualBlur.tsx
+│   ├── PixelBlast.tsx
+│   └── RotatingText.tsx
 ├── lib/
-│   └── utils.ts               # Utility functions
-└── public/
-    └── images/
-        ├── surveillance-*.jpg # Demo camera feed images
-        └── venueshield-logo.png
+│   └── utils.ts                    # Utility functions (cn, etc.)
+├── public/images/
+│   ├── surveillance-1.jpg          # Main Gate
+│   ├── surveillance-2.jpg          # Main Field
+│   ├── surveillance-3.jpg          # North Hallway
+│   ├── surveillance-4.jpg          # Parking Lot B
+│   ├── surveillance-5.jpg          # Backstage
+│   ├── surveillance-6.jpg          # Food Court
+│   └── venueshield-logo.png
+├── package.json
+├── tsconfig.json
+└── tailwind.config.ts
 ```
 
 ## 🎨 Tech Stack
@@ -93,16 +116,3 @@ pnpm type-check   # Run TypeScript type checking
 pnpm format       # Check code formatting
 pnpm format-write # Format code with Prettier
 ```
-
-## 🔮 Roadmap
-
-- [ ] Backend API integration
-- [ ] Real camera feed support
-- [ ] User authentication
-- [ ] Custom alert configuration
-- [ ] Report generation
-- [ ] Mobile app
-
-## 📄 License
-
-MIT
