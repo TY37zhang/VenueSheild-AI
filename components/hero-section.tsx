@@ -64,12 +64,12 @@ export function HeroSection() {
 
         {/* CTA Buttons - Updated button text */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 sm:mb-16 animate-fade-in-buttons">
-          <Link href="/demo">
+          <Link href="/waitlist">
             <Button
               size="lg"
               className="bg-white text-black rounded-full px-8 py-4 text-lg font-medium transition-all duration-300 hover:bg-gray-50 hover:scale-105 hover:shadow-lg group cursor-pointer relative overflow-hidden"
             >
-              Demo
+              Sign up for waitlist
               <ArrowRight />
             </Button>
           </Link>
