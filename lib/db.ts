@@ -46,4 +46,3 @@ export async function checkEmailExists(email: string): Promise<boolean> {
   `;
   return result.length > 0;
 }
-

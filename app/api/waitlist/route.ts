@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     if (!name || !email || !company || !venueType) {
       return NextResponse.json(
         { error: "Missing required fields" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     if (!emailRegex.test(email)) {
       return NextResponse.json(
         { error: "Invalid email format" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -42,27 +42,27 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(
-      { 
-        success: true, 
+      {
+        success: true,
         message: "Successfully added to waitlist",
-        id: result.id 
+        id: result.id,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Waitlist submission error:", error);
-    
+
     // Check for unique constraint violation (duplicate email)
     if (error instanceof Error && error.message.includes("duplicate")) {
       return NextResponse.json(
         { error: "This email is already on the waitlist" },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
     return NextResponse.json(
       { error: "Failed to add to waitlist. Please try again." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -81,8 +81,7 @@ export async function GET() {
     console.error("Waitlist count error:", error);
     return NextResponse.json(
       { error: "Failed to get waitlist count" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

@@ -82,7 +82,7 @@ export default function WaitlistPage() {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
-    
+
     try {
       const response = await fetch("/api/waitlist", {
         method: "POST",
@@ -100,14 +100,20 @@ export default function WaitlistPage() {
 
       setIsSubmitted(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -194,7 +200,7 @@ export default function WaitlistPage() {
                 <div className="relative">
                   {/* Glow effect */}
                   <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/20 via-cyan-500/20 to-blue-500/20 rounded-3xl blur-xl opacity-50" />
-                  
+
                   {/* Form Card */}
                   <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 sm:p-10">
                     {isSubmitted ? (
@@ -326,7 +332,11 @@ export default function WaitlistPage() {
                               Select venue type...
                             </option>
                             {venueTypes.map((type) => (
-                              <option key={type} value={type} className="bg-gray-900">
+                              <option
+                                key={type}
+                                value={type}
+                                className="bg-gray-900"
+                              >
                                 {type}
                               </option>
                             ))}
@@ -416,4 +426,3 @@ export default function WaitlistPage() {
     </div>
   );
 }
-
