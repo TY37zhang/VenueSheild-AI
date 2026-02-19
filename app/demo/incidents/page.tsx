@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   AlertTriangle,
-  AlertCircle,
   CheckCircle,
   Clock,
   MapPin,
@@ -35,6 +35,7 @@ import {
   Timer,
 } from "lucide-react";
 import Image from "next/image";
+import type { ShadowDetection } from "@/lib/types/shadow";
 
 // Incident types
 type IncidentStatus =
@@ -65,6 +66,8 @@ interface Incident {
   reportedAt: Date;
   updatedAt: Date;
   resolvedAt?: Date;
+  acknowledgedAt?: Date;
+  acknowledgedBy?: string;
   assignedTo: string[];
   aiConfidence: number;
   detectionMethod: "ai" | "manual" | "sensor";
@@ -78,279 +81,85 @@ interface Incident {
   affectedCapacity: number;
 }
 
-// Mock incidents data - mapped to actual camera locations
-const mockIncidents: Incident[] = [
-  {
-    id: "INC-2024-001",
-    title: "High Crowd Density - Main Gate",
-    description:
-      "AI detected crowd density at 97% capacity in Main Gate corridor. Dense crowd flow through arched passageway with security guard monitoring. Risk of crowd crush if density increases.",
-    type: "crowd",
-    priority: "critical",
-    status: "active",
-    zone: "Zone A",
-    location: "Main Gate - Arched Corridor",
-    camera: "CAM-01",
-    reportedAt: new Date(Date.now() - 5 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 2 * 60 * 1000),
-    assignedTo: ["John Smith", "Sarah Johnson"],
-    aiConfidence: 96,
-    detectionMethod: "ai",
-    timeline: [
-      {
-        time: new Date(Date.now() - 5 * 60 * 1000),
-        action: "AI detected critical crowd density (97%)",
-        user: "System",
-        type: "detection",
-      },
-      {
-        time: new Date(Date.now() - 4 * 60 * 1000),
-        action: "Alert dispatched to security team",
-        user: "System",
-        type: "response",
-      },
-      {
-        time: new Date(Date.now() - 3 * 60 * 1000),
-        action: "Assigned to John Smith",
-        user: "Control Room",
-        type: "update",
-      },
-      {
-        time: new Date(Date.now() - 2 * 60 * 1000),
-        action: "Implementing crowd flow control measures",
-        user: "John Smith",
-        type: "response",
-      },
-    ],
-    relatedCameras: ["CAM-01", "CAM-02"],
-    affectedCapacity: 487,
-  },
-  {
-    id: "INC-2024-002",
-    title: "Crowd Gathering - Food Court",
-    description:
-      "Unusual clustering of individuals detected near central seating area of Food Court. Multiple groups converging, potential dispute or incident.",
-    type: "crowd",
-    priority: "high",
-    status: "responding",
-    zone: "Zone F",
-    location: "Food Court - Central Tables",
-    camera: "CAM-06",
-    reportedAt: new Date(Date.now() - 12 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 8 * 60 * 1000),
-    assignedTo: ["Mike Chen"],
-    aiConfidence: 89,
-    detectionMethod: "ai",
-    timeline: [
-      {
-        time: new Date(Date.now() - 12 * 60 * 1000),
-        action: "AI detected unusual crowd gathering pattern",
-        user: "System",
-        type: "detection",
-      },
-      {
-        time: new Date(Date.now() - 11 * 60 * 1000),
-        action: "Alert dispatched to security team",
-        user: "System",
-        type: "response",
-      },
-      {
-        time: new Date(Date.now() - 10 * 60 * 1000),
-        action: "Assigned to Mike Chen",
-        user: "Control Room",
-        type: "update",
-      },
-      {
-        time: new Date(Date.now() - 8 * 60 * 1000),
-        action: "En route to Food Court, ETA 1 min",
-        user: "Mike Chen",
-        type: "response",
-      },
-    ],
-    relatedCameras: ["CAM-06"],
-    affectedCapacity: 89,
-  },
-  {
-    id: "INC-2024-003",
-    title: "Unoccupied Area Alert - North Hallway",
-    description:
-      "North Hallway has been completely empty for extended period. Dim lighting conditions detected. Routine patrol recommended.",
-    type: "security",
-    priority: "low",
-    status: "monitoring",
-    zone: "Zone C",
-    location: "North Hallway - Service Corridor",
-    camera: "CAM-03",
-    reportedAt: new Date(Date.now() - 15 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 5 * 60 * 1000),
-    assignedTo: ["Lisa Wong"],
-    aiConfidence: 78,
-    detectionMethod: "ai",
-    timeline: [
-      {
-        time: new Date(Date.now() - 15 * 60 * 1000),
-        action: "AI flagged extended vacancy in corridor",
-        user: "System",
-        type: "detection",
-      },
-      {
-        time: new Date(Date.now() - 14 * 60 * 1000),
-        action: "Low priority alert generated",
-        user: "System",
-        type: "response",
-      },
-      {
-        time: new Date(Date.now() - 10 * 60 * 1000),
-        action: "Added to patrol route",
-        user: "Control Room",
-        type: "update",
-      },
-      {
-        time: new Date(Date.now() - 5 * 60 * 1000),
-        action: "Scheduled for next patrol sweep",
-        user: "Lisa Wong",
-        type: "update",
-      },
-    ],
-    relatedCameras: ["CAM-03"],
-    affectedCapacity: 0,
-  },
-  {
-    id: "INC-2024-004",
-    title: "Crew Member Verified - Backstage",
-    description:
-      "Single individual detected on phone near stage equipment in backstage area. Verified as authorized crew member.",
-    type: "security",
-    priority: "low",
-    status: "resolved",
-    zone: "Zone E",
-    location: "Backstage - Near Equipment Truck",
-    camera: "CAM-05",
-    reportedAt: new Date(Date.now() - 45 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 20 * 60 * 1000),
-    resolvedAt: new Date(Date.now() - 20 * 60 * 1000),
-    assignedTo: ["James Wilson"],
-    aiConfidence: 94,
-    detectionMethod: "ai",
-    timeline: [
-      {
-        time: new Date(Date.now() - 45 * 60 * 1000),
-        action: "Motion detected in backstage area",
-        user: "System",
-        type: "detection",
-      },
-      {
-        time: new Date(Date.now() - 40 * 60 * 1000),
-        action: "Security dispatched to verify",
-        user: "Control Room",
-        type: "response",
-      },
-      {
-        time: new Date(Date.now() - 25 * 60 * 1000),
-        action: "Individual on phone identified as sound technician",
-        user: "James Wilson",
-        type: "update",
-      },
-      {
-        time: new Date(Date.now() - 20 * 60 * 1000),
-        action: "Credentials verified, routine activity",
-        user: "James Wilson",
-        type: "resolution",
-      },
-    ],
-    relatedCameras: ["CAM-05"],
-    affectedCapacity: 3,
-  },
-  {
-    id: "INC-2024-005",
-    title: "Vehicle Count Verification - Parking Lot B",
-    description:
-      "Routine vehicle count verification in Parking Lot B. Night vision cameras showing scattered vehicles with adequate spacing.",
-    type: "other",
-    priority: "low",
-    status: "resolved",
-    zone: "Zone D",
-    location: "Parking Lot B - All Sections",
-    camera: "CAM-04",
-    reportedAt: new Date(Date.now() - 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 50 * 60 * 1000),
-    resolvedAt: new Date(Date.now() - 50 * 60 * 1000),
-    assignedTo: ["Parking Attendant"],
+interface ApiIncident {
+  id: string;
+  cameraId: string;
+  type: "capacity_warning" | "capacity_critical" | "camera_offline" | "camera_recovered";
+  severity: "low" | "medium" | "high" | "critical";
+  status: "active" | "resolved";
+  title: string;
+  description: string;
+  triggerValue?: number | null;
+  thresholdValue?: number | null;
+  source: "rule-engine";
+  zone?: string | null;
+  cameraName?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  resolvedAt?: string | null;
+  acknowledgedAt?: string | null;
+  acknowledgedBy?: string | null;
+}
+
+interface IncidentApiResponse {
+  incidents: ApiIncident[];
+}
+
+interface ShadowApiResponse {
+  detections: ShadowDetection[];
+}
+
+function mapApiIncidentToUI(incident: ApiIncident): Incident {
+  const uiType: IncidentType =
+    incident.type === "capacity_warning" || incident.type === "capacity_critical"
+      ? "crowd"
+      : "technical";
+
+  const timelineAction =
+    incident.type === "camera_offline"
+      ? "Camera stream went offline"
+      : incident.type === "camera_recovered"
+        ? "Camera stream recovered"
+        : incident.type === "capacity_critical"
+          ? "Capacity crossed critical threshold"
+          : "Capacity crossed warning threshold";
+
+  return {
+    id: incident.id,
+    title: incident.title,
+    description: incident.description,
+    type: uiType,
+    priority: incident.severity as IncidentPriority,
+    status: incident.status === "active" ? "active" : "resolved",
+    zone: incident.zone ?? "Unknown Zone",
+    location: `${incident.zone ?? "Unknown Zone"} - ${incident.cameraName ?? incident.cameraId}`,
+    camera: incident.cameraId,
+    reportedAt: new Date(incident.createdAt),
+    updatedAt: new Date(incident.updatedAt),
+    resolvedAt: incident.resolvedAt ? new Date(incident.resolvedAt) : undefined,
+    acknowledgedAt: incident.acknowledgedAt
+      ? new Date(incident.acknowledgedAt)
+      : undefined,
+    acknowledgedBy: incident.acknowledgedBy ?? undefined,
+    assignedTo: ["Rule Engine"],
     aiConfidence: 0,
-    detectionMethod: "manual",
+    detectionMethod: "sensor",
     timeline: [
       {
-        time: new Date(Date.now() - 60 * 60 * 1000),
-        action: "Routine vehicle count initiated",
-        user: "Control Room",
+        time: new Date(incident.createdAt),
+        action: timelineAction,
+        user: "System",
         type: "detection",
       },
-      {
-        time: new Date(Date.now() - 55 * 60 * 1000),
-        action: "IR cameras captured lot overview",
-        user: "System",
-        type: "response",
-      },
-      {
-        time: new Date(Date.now() - 52 * 60 * 1000),
-        action: "Count verified: 127 vehicles",
-        user: "Parking Attendant",
-        type: "update",
-      },
-      {
-        time: new Date(Date.now() - 50 * 60 * 1000),
-        action: "Lot at 25% capacity, verification complete",
-        user: "Control Room",
-        type: "resolution",
-      },
     ],
-    relatedCameras: ["CAM-04"],
-    affectedCapacity: 127,
-  },
-  {
-    id: "INC-2024-006",
-    title: "Stadium Event Monitoring",
-    description:
-      "Main Field event in progress. Crowd of approximately 18,500 attending. Person observed walking down aisle - routine movement.",
-    type: "crowd",
-    priority: "low",
-    status: "monitoring",
-    zone: "Zone B",
-    location: "Main Field - Stadium Floor & Seating",
-    camera: "CAM-02",
-    reportedAt: new Date(Date.now() - 30 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 25 * 60 * 1000),
-    assignedTo: ["Event Security Team"],
-    aiConfidence: 0,
-    detectionMethod: "manual",
-    timeline: [
-      {
-        time: new Date(Date.now() - 30 * 60 * 1000),
-        action: "Event monitoring commenced",
-        user: "Control Room",
-        type: "detection",
-      },
-      {
-        time: new Date(Date.now() - 28 * 60 * 1000),
-        action: "Crowd count updated: 18,500",
-        user: "System",
-        type: "response",
-      },
-      {
-        time: new Date(Date.now() - 25 * 60 * 1000),
-        action: "All sectors reporting normal activity",
-        user: "Event Security Team",
-        type: "update",
-      },
-    ],
-    relatedCameras: ["CAM-02"],
-    affectedCapacity: 18500,
-  },
-];
+    relatedCameras: [incident.cameraId],
+    affectedCapacity: Number(incident.triggerValue ?? 0),
+  };
+}
 
 const priorityConfig = {
-  critical: { color: "red", icon: AlertCircle, label: "Critical" },
-  high: { color: "amber", icon: TriangleAlert, label: "High" },
+  critical: { color: "red", icon: TriangleAlert, label: "Critical" },
+  high: { color: "amber", icon: AlertTriangle, label: "High" },
   medium: { color: "blue", icon: CircleAlert, label: "Medium" },
   low: { color: "slate", icon: Info, label: "Low" },
 };
@@ -373,7 +182,11 @@ const typeConfig = {
 };
 
 export default function IncidentsPage() {
-  const [incidents, setIncidents] = useState(mockIncidents);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialCameraId = searchParams.get("cameraId")?.trim() ?? "";
+  const [isMounted, setIsMounted] = useState(false);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(
     null,
   );
@@ -384,16 +197,99 @@ export default function IncidentsPage() {
   const [filterPriority, setFilterPriority] = useState<
     IncidentPriority | "all"
   >("all");
+  const [cameraFilter, setCameraFilter] = useState<string>(
+    initialCameraId || "all",
+  );
   const [filterOpen, setFilterOpen] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [actionState, setActionState] = useState<{
+    incidentId: string;
+    action: "resolve" | "escalate" | "acknowledge";
+    status: "idle" | "loading" | "success" | "error";
+    message: string;
+  } | null>(null);
+  const [shadowByCamera, setShadowByCamera] = useState<
+    Record<string, ShadowDetection>
+  >({});
 
   useEffect(() => {
+    const queryCamera = searchParams.get("cameraId")?.trim() ?? "";
+    setCameraFilter(queryCamera || "all");
+  }, [searchParams]);
+
+  useEffect(() => {
+    setIsMounted(true);
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchIncidents = async () => {
+      try {
+        const response = await fetch("/api/incidents?status=all&limit=200", {
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch incidents");
+        }
+        const payload: IncidentApiResponse = await response.json();
+        const mapped = (payload.incidents ?? []).map(mapApiIncidentToUI);
+        if (!mounted) return;
+        setIncidents(mapped);
+      } catch (error) {
+        console.warn("[incidents] failed to fetch incidents", error);
+        if (!mounted) return;
+        setIncidents([]);
+      }
+    };
+
+    void fetchIncidents();
+    const interval = setInterval(fetchIncidents, 3000);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchShadow = async () => {
+      try {
+        const response = await fetch("/api/feed/shadow?limit=200", {
+          cache: "no-store",
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch shadow detections");
+        }
+        const payload: ShadowApiResponse = await response.json();
+        const byCamera = Object.fromEntries(
+          (payload.detections ?? []).map((detection) => [
+            detection.cameraId,
+            detection,
+          ]),
+        ) as Record<string, ShadowDetection>;
+        if (!mounted) return;
+        setShadowByCamera(byCamera);
+      } catch (error) {
+        console.warn("[incidents] failed to fetch shadow detections", error);
+      }
+    };
+
+    void fetchShadow();
+    const interval = setInterval(fetchShadow, 5000);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+
   const formatTimeAgo = (date: Date) => {
+    if (!isMounted) return "--";
     const seconds = Math.floor((currentTime.getTime() - date.getTime()) / 1000);
     if (seconds < 60) return `${seconds}s ago`;
     const minutes = Math.floor(seconds / 60);
@@ -402,6 +298,14 @@ export default function IncidentsPage() {
     if (hours < 24) return `${hours}h ago`;
     return `${Math.floor(hours / 24)}d ago`;
   };
+
+  const cameraOptions = Array.from(
+    new Set(incidents.map((incident) => incident.camera)),
+  ).sort();
+
+  if (cameraFilter !== "all" && !cameraOptions.includes(cameraFilter)) {
+    cameraOptions.unshift(cameraFilter);
+  }
 
   const filteredIncidents = incidents.filter((incident) => {
     const matchesSearch =
@@ -412,8 +316,20 @@ export default function IncidentsPage() {
       filterStatus === "all" || incident.status === filterStatus;
     const matchesPriority =
       filterPriority === "all" || incident.priority === filterPriority;
-    return matchesSearch && matchesStatus && matchesPriority;
+    const matchesCamera =
+      cameraFilter === "all" || incident.camera === cameraFilter;
+    return matchesSearch && matchesStatus && matchesPriority && matchesCamera;
   });
+
+  useEffect(() => {
+    if (!selectedIncident) return;
+    const stillVisible = filteredIncidents.some(
+      (incident) => incident.id === selectedIncident.id,
+    );
+    if (!stillVisible) {
+      setSelectedIncident(null);
+    }
+  }, [filteredIncidents, selectedIncident]);
 
   const activeCount = incidents.filter(
     (i) => i.status === "active" || i.status === "escalated",
@@ -423,7 +339,37 @@ export default function IncidentsPage() {
   ).length;
   const resolvedToday = incidents.filter((i) => i.status === "resolved").length;
 
-  const handleResolve = (incidentId: string) => {
+  const handleResolve = async (incidentId: string) => {
+    setActionState({
+      incidentId,
+      action: "resolve",
+      status: "loading",
+      message: "Resolving incident...",
+    });
+
+    try {
+      const response = await fetch(`/api/incidents/${incidentId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action: "resolve" }),
+      });
+
+      if (!response.ok) {
+        throw new Error("API resolve request failed");
+      }
+    } catch (error) {
+      console.warn("[incidents] failed to resolve", error);
+      setActionState({
+        incidentId,
+        action: "resolve",
+        status: "error",
+        message: "Failed to resolve incident.",
+      });
+      return;
+    }
+
     setIncidents((prev) =>
       prev.map((i) =>
         i.id === incidentId
@@ -457,9 +403,53 @@ export default function IncidentsPage() {
           : null,
       );
     }
+
+    setActionState((prev) =>
+      prev?.incidentId === incidentId
+        ? {
+            incidentId,
+            action: "resolve",
+            status: prev.status === "error" ? "error" : "success",
+            message:
+              prev.status === "error"
+                ? prev.message
+                : "Incident resolved successfully.",
+          }
+        : prev,
+    );
   };
 
-  const handleEscalate = (incidentId: string) => {
+  const handleEscalate = async (incidentId: string) => {
+    setActionState({
+      incidentId,
+      action: "escalate",
+      status: "loading",
+      message: "Escalating incident...",
+    });
+
+    try {
+      const response = await fetch(`/api/incidents/${incidentId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action: "escalate" }),
+      });
+
+      if (!response.ok) {
+        throw new Error("API escalate request failed");
+      }
+    } catch (error) {
+      console.warn("[incidents] failed to escalate", error);
+      setActionState({
+        incidentId,
+        action: "escalate",
+        status: "error",
+        message: "Failed to escalate incident.",
+      });
+      return;
+    }
+
     setIncidents((prev) =>
       prev.map((i) =>
         i.id === incidentId
@@ -479,8 +469,95 @@ export default function IncidentsPage() {
               ],
             }
           : i,
+        ),
+    );
+
+    setActionState((prev) =>
+      prev?.incidentId === incidentId
+        ? {
+            incidentId,
+            action: "escalate",
+            status: prev.status === "error" ? "error" : "success",
+            message:
+              prev.status === "error"
+                ? prev.message
+                : "Incident escalated successfully.",
+          }
+        : prev,
+    );
+  };
+
+  const handleAcknowledge = async (incidentId: string) => {
+    setActionState({
+      incidentId,
+      action: "acknowledge",
+      status: "loading",
+      message: "Acknowledging incident...",
+    });
+
+    try {
+      const response = await fetch(`/api/incidents/${incidentId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action: "acknowledge", actor: "Operator" }),
+      });
+
+      if (!response.ok) {
+        throw new Error("API acknowledge request failed");
+      }
+    } catch (error) {
+      console.warn("[incidents] failed to acknowledge", error);
+      setActionState({
+        incidentId,
+        action: "acknowledge",
+        status: "error",
+        message: "Failed to acknowledge incident.",
+      });
+      return;
+    }
+
+    setIncidents((prev) =>
+      prev.map((i) =>
+        i.id === incidentId
+          ? {
+              ...i,
+              acknowledgedAt: new Date(),
+              acknowledgedBy: "Operator",
+              updatedAt: new Date(),
+              timeline: [
+                ...i.timeline,
+                {
+                  time: new Date(),
+                  action: "Incident acknowledged by operator",
+                  user: "Operator",
+                  type: "update" as const,
+                },
+              ],
+            }
+          : i,
       ),
     );
+    if (selectedIncident?.id === incidentId) {
+      setSelectedIncident((prev) =>
+        prev
+          ? {
+              ...prev,
+              acknowledgedAt: new Date(),
+              acknowledgedBy: "Operator",
+              updatedAt: new Date(),
+            }
+          : null,
+      );
+    }
+
+    setActionState({
+      incidentId,
+      action: "acknowledge",
+      status: "success",
+      message: "Incident acknowledged.",
+    });
   };
 
   return (
@@ -612,6 +689,34 @@ export default function IncidentsPage() {
         </div>
       </div>
 
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setCameraFilter("all")}
+          className={`rounded-full px-3 py-1 text-xs border ${
+            cameraFilter === "all"
+              ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-300"
+              : "border-slate-700 bg-slate-800 text-slate-300"
+          }`}
+        >
+          All Cameras
+        </button>
+        {cameraOptions.map((cameraId) => (
+          <button
+            key={cameraId}
+            type="button"
+            onClick={() => setCameraFilter(cameraId)}
+            className={`rounded-full px-3 py-1 text-xs border ${
+              cameraFilter === cameraId
+                ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-300"
+                : "border-slate-700 bg-slate-800 text-slate-300"
+            }`}
+          >
+            {cameraId}
+          </button>
+        ))}
+      </div>
+
       {/* Stats Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
         <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 flex items-center gap-3">
@@ -697,6 +802,7 @@ export default function IncidentsPage() {
               })
               .map((incident) => {
                 const PriorityIcon = priorityConfig[incident.priority].icon;
+                const shadow = shadowByCamera[incident.camera];
 
                 return (
                   <motion.div
@@ -760,11 +866,32 @@ export default function IncidentsPage() {
                               AI
                             </span>
                           )}
+                          {incident.acknowledgedAt && (
+                            <span className="text-xs px-1.5 py-0.5 bg-blue-500/20 text-blue-300 rounded">
+                              ACK
+                            </span>
+                          )}
                         </div>
 
                         <h3 className="font-medium text-white text-sm truncate">
                           {incident.title}
                         </h3>
+                        {shadow && (
+                          <div
+                            className={`mt-1 text-[11px] ${
+                              shadow.severity === "critical"
+                                ? "text-red-300"
+                                : shadow.severity === "high"
+                                  ? "text-amber-300"
+                                  : shadow.severity === "medium"
+                                    ? "text-blue-300"
+                                    : "text-emerald-300"
+                            }`}
+                          >
+                            Shadow advisory: {shadow.severity.toUpperCase()} (
+                            {Math.round(shadow.confidence * 100)}%)
+                          </div>
+                        )}
 
                         <div className="flex items-center gap-3 mt-2 text-xs text-slate-400">
                           <div className="flex items-center gap-1">
@@ -773,8 +900,22 @@ export default function IncidentsPage() {
                           </div>
                           <div className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
-                            {formatTimeAgo(incident.reportedAt)}
+                            <span suppressHydrationWarning>
+                              {formatTimeAgo(incident.reportedAt)}
+                            </span>
                           </div>
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              router.push(
+                                `/feed?cameraId=${encodeURIComponent(incident.camera)}`,
+                              );
+                            }}
+                            className="rounded border border-emerald-500/40 bg-emerald-500/10 px-1.5 py-0.5 text-[10px] text-emerald-300 hover:bg-emerald-500/20"
+                          >
+                            Open Camera
+                          </button>
                         </div>
                       </div>
 
@@ -894,7 +1035,27 @@ export default function IncidentsPage() {
                   <p className="text-sm text-slate-300">
                     {selectedIncident.description}
                   </p>
+                  {selectedIncident.acknowledgedAt && (
+                    <p className="mt-2 text-xs text-blue-300">
+                      Acknowledged by {selectedIncident.acknowledgedBy ?? "Operator"} •{" "}
+                      {formatTimeAgo(selectedIncident.acknowledgedAt)}
+                    </p>
+                  )}
                 </div>
+                {shadowByCamera[selectedIncident.camera] && (
+                  <div className="mb-4 rounded-lg border border-cyan-500/30 bg-cyan-500/10 p-3">
+                    <div className="text-xs font-semibold text-cyan-300">
+                      Shadow Mode Advisory
+                    </div>
+                    <div className="mt-1 text-xs text-slate-200">
+                      {shadowByCamera[selectedIncident.camera].summary}
+                    </div>
+                    <div className="mt-1 text-[11px] text-slate-300">
+                      Recommended action:{" "}
+                      {shadowByCamera[selectedIncident.camera].recommendedAction}
+                    </div>
+                  </div>
+                )}
 
                 {/* Location & Camera */}
                 <div className="grid grid-cols-2 gap-4 mb-4">
@@ -921,6 +1082,17 @@ export default function IncidentsPage() {
                     <div className="text-xs text-slate-400 mt-0.5">
                       +{selectedIncident.relatedCameras.length - 1} related
                     </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        router.push(
+                          `/feed?cameraId=${encodeURIComponent(selectedIncident.camera)}`,
+                        )
+                      }
+                      className="mt-2 rounded border border-emerald-500/40 bg-emerald-500/10 px-2 py-1 text-[10px] text-emerald-300 hover:bg-emerald-500/20"
+                    >
+                      Open Camera Feed
+                    </button>
                   </div>
                 </div>
 
@@ -946,9 +1118,13 @@ export default function IncidentsPage() {
                   </div>
                   <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
                     <span className="text-xs text-white">
-                      {currentTime.toLocaleTimeString("en-US", {
-                        hour12: false,
-                      })}
+                      <span suppressHydrationWarning>
+                        {isMounted
+                          ? currentTime.toLocaleTimeString("en-US", {
+                              hour12: false,
+                            })
+                          : "--:--:--"}
+                      </span>
                     </span>
                     <button className="p-2 bg-black/60 rounded-lg hover:bg-black/80 transition-colors">
                       <Play className="w-4 h-4" />
@@ -1018,7 +1194,9 @@ export default function IncidentsPage() {
                           <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
                             <span>{event.user}</span>
                             <span>•</span>
-                            <span>{formatTimeAgo(event.time)}</span>
+                            <span suppressHydrationWarning>
+                              {formatTimeAgo(event.time)}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -1030,6 +1208,22 @@ export default function IncidentsPage() {
               {/* Actions Footer */}
               {selectedIncident.status !== "resolved" && (
                 <div className="border-t border-slate-800 p-4">
+                  {actionState?.incidentId === selectedIncident.id && (
+                    <div
+                      className={`mb-3 rounded-lg border px-3 py-2 text-xs ${
+                        actionState.status === "loading"
+                          ? "border-blue-500/30 bg-blue-500/10 text-blue-300"
+                          : actionState.status === "success"
+                            ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+                            : actionState.status === "error"
+                              ? "border-amber-500/30 bg-amber-500/10 text-amber-300"
+                              : "border-slate-700 bg-slate-800/40 text-slate-300"
+                      }`}
+                    >
+                      {actionState.message}
+                    </div>
+                  )}
+
                   <div className="flex items-center gap-2 mb-3">
                     <input
                       type="text"
@@ -1044,20 +1238,55 @@ export default function IncidentsPage() {
                   </div>
 
                   <div className="flex items-center gap-2">
+                    {!selectedIncident.acknowledgedAt && (
+                      <button
+                        onClick={() => void handleAcknowledge(selectedIncident.id)}
+                        disabled={
+                          actionState?.incidentId === selectedIncident.id &&
+                          actionState.status === "loading"
+                        }
+                        className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/30 rounded-lg transition-colors font-medium text-sm"
+                      >
+                        <CheckCircle className="w-4 h-4" />
+                        {actionState?.incidentId === selectedIncident.id &&
+                        actionState.action === "acknowledge" &&
+                        actionState.status === "loading"
+                          ? "Acknowledging..."
+                          : "Acknowledge"}
+                      </button>
+                    )}
                     <button
-                      onClick={() => handleResolve(selectedIncident.id)}
+                      onClick={() => void handleResolve(selectedIncident.id)}
+                      disabled={
+                        actionState?.incidentId === selectedIncident.id &&
+                        actionState.status === "loading"
+                      }
                       className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium text-sm"
                     >
                       <CheckCircle className="w-4 h-4" />
-                      Mark Resolved
+                      {actionState?.incidentId === selectedIncident.id &&
+                      actionState.action === "resolve" &&
+                      actionState.status === "loading"
+                        ? "Resolving..."
+                        : "Mark Resolved"}
                     </button>
                     {selectedIncident.priority !== "critical" && (
                       <button
-                        onClick={() => handleEscalate(selectedIncident.id)}
+                        onClick={() =>
+                          void handleEscalate(selectedIncident.id)
+                        }
+                        disabled={
+                          actionState?.incidentId === selectedIncident.id &&
+                          actionState.status === "loading"
+                        }
                         className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 rounded-lg transition-colors font-medium text-sm"
                       >
                         <ArrowUpRight className="w-4 h-4" />
-                        Escalate
+                        {actionState?.incidentId === selectedIncident.id &&
+                        actionState.action === "escalate" &&
+                        actionState.status === "loading"
+                          ? "Escalating..."
+                          : "Escalate"}
                       </button>
                     )}
                   </div>
@@ -1072,8 +1301,10 @@ export default function IncidentsPage() {
                     <div>
                       <div className="font-medium">Incident Resolved</div>
                       <div className="text-xs text-slate-400">
-                        {selectedIncident.resolvedAt &&
-                          `Closed ${formatTimeAgo(selectedIncident.resolvedAt)}`}
+                        <span suppressHydrationWarning>
+                          {selectedIncident.resolvedAt &&
+                            `Closed ${formatTimeAgo(selectedIncident.resolvedAt)}`}
+                        </span>
                       </div>
                     </div>
                   </div>

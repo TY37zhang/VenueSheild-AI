@@ -26,7 +26,7 @@ const navItems = [
   { href: "/demo/cameras", icon: Camera, label: "Camera Feeds" },
   { href: "/demo/analytics", icon: Users, label: "Crowd Analytics" },
   {
-    href: "/demo/incidents",
+    href: "/feed/incident",
     icon: AlertTriangle,
     label: "Incidents",
     badge: 2,
@@ -57,6 +57,7 @@ export default function DemoLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [isMounted, setIsMounted] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -64,6 +65,8 @@ export default function DemoLayout({
   const [selectedVideo, setSelectedVideo] = useState(demoVideos[0]);
 
   useEffect(() => {
+    setIsMounted(true);
+
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
@@ -104,8 +107,10 @@ export default function DemoLayout({
             </button>
             <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-slate-800 rounded-lg">
               <Clock className="w-4 h-4 text-slate-400" />
-              <span className="text-slate-300 font-mono">
-                {currentTime.toLocaleTimeString("en-US", { hour12: false })}
+              <span className="text-slate-300 font-mono" suppressHydrationWarning>
+                {isMounted
+                  ? currentTime.toLocaleTimeString("en-US", { hour12: false })
+                  : "--:--:--"}
               </span>
             </div>
           </div>

@@ -33,190 +33,68 @@ import {
   Crosshair,
 } from "lucide-react";
 import Image from "next/image";
+import type { CameraFeed } from "@/lib/feed";
 
-// Extended camera data - mapped to actual surveillance images
-const allCameras = [
-  {
-    id: 1,
-    name: "Main Gate",
-    zone: "Zone A",
-    status: "online",
-    alertLevel: "warning",
-    occupancy: 487,
-    capacity: 500,
-    recording: true,
-    hasAudio: true,
-    ptz: true,
-    lastMotion: "Just now",
-    resolution: "4K",
-    fps: 30,
-  },
-  {
-    id: 2,
-    name: "Main Field",
-    zone: "Zone B",
-    status: "online",
-    alertLevel: "normal",
-    occupancy: 18500,
-    capacity: 25000,
-    recording: true,
-    hasAudio: true,
-    ptz: true,
-    lastMotion: "Just now",
-    resolution: "4K",
-    fps: 30,
-  },
-  {
-    id: 3,
-    name: "North Hallway",
-    zone: "Zone C",
-    status: "online",
-    alertLevel: "normal",
-    occupancy: 0,
-    capacity: 200,
-    recording: true,
+type FeedApiResponse = {
+  feeds: CameraFeed[];
+};
+
+type DemoCamera = {
+  id: number;
+  cameraId: string;
+  name: string;
+  zone: string;
+  status: "online" | "offline";
+  alertLevel: "normal" | "warning" | "alert";
+  occupancy: number;
+  capacity: number;
+  recording: boolean;
+  hasAudio: boolean;
+  ptz: boolean;
+  lastMotion: string;
+  resolution: string;
+  fps: number;
+  imageUrl: string;
+};
+
+const cameraTraitById: Record<number, Omit<DemoCamera, "id" | "cameraId" | "name" | "zone" | "status" | "alertLevel" | "occupancy" | "capacity" | "imageUrl">> = {
+  1: { recording: true, hasAudio: true, ptz: true, lastMotion: "Just now", resolution: "4K", fps: 30 },
+  2: { recording: true, hasAudio: true, ptz: true, lastMotion: "Just now", resolution: "4K", fps: 30 },
+  3: { recording: true, hasAudio: false, ptz: true, lastMotion: "12 min ago", resolution: "1080p", fps: 30 },
+  4: { recording: true, hasAudio: false, ptz: true, lastMotion: "2 min ago", resolution: "4K", fps: 24 },
+  5: { recording: true, hasAudio: true, ptz: false, lastMotion: "Just now", resolution: "4K", fps: 30 },
+  6: { recording: true, hasAudio: true, ptz: true, lastMotion: "Just now", resolution: "4K", fps: 30 },
+  7: { recording: true, hasAudio: false, ptz: true, lastMotion: "23 sec ago", resolution: "1080p", fps: 24 },
+  8: { recording: false, hasAudio: true, ptz: true, lastMotion: "N/A", resolution: "4K", fps: 30 },
+  9: { recording: true, hasAudio: false, ptz: false, lastMotion: "3 min ago", resolution: "720p", fps: 24 },
+  10: { recording: true, hasAudio: true, ptz: false, lastMotion: "Just now", resolution: "4K", fps: 30 },
+  11: { recording: true, hasAudio: true, ptz: true, lastMotion: "8 sec ago", resolution: "4K", fps: 30 },
+  12: { recording: false, hasAudio: false, ptz: false, lastMotion: "N/A", resolution: "1080p", fps: 30 },
+};
+
+function toDemoCamera(feed: CameraFeed): DemoCamera {
+  const traits = cameraTraitById[feed.id] ?? {
+    recording: feed.isLive ?? true,
     hasAudio: false,
-    ptz: true,
-    lastMotion: "12 min ago",
+    ptz: false,
+    lastMotion: "Just now",
     resolution: "1080p",
     fps: 30,
-  },
-  {
-    id: 4,
-    name: "Parking Lot B",
-    zone: "Zone D",
-    status: "online",
-    alertLevel: "normal",
-    occupancy: 127,
-    capacity: 500,
-    recording: true,
-    hasAudio: false,
-    ptz: true,
-    lastMotion: "2 min ago",
-    resolution: "4K",
-    fps: 24,
-  },
-  {
-    id: 5,
-    name: "Backstage",
-    zone: "Zone E",
-    status: "online",
-    alertLevel: "normal",
-    occupancy: 3,
-    capacity: 50,
-    recording: true,
-    hasAudio: true,
-    ptz: false,
-    lastMotion: "Just now",
-    resolution: "4K",
-    fps: 30,
-  },
-  {
-    id: 6,
-    name: "Food Court",
-    zone: "Zone F",
-    status: "online",
-    alertLevel: "alert",
-    occupancy: 89,
-    capacity: 300,
-    recording: true,
-    hasAudio: true,
-    ptz: true,
-    lastMotion: "Just now",
-    resolution: "4K",
-    fps: 30,
-  },
-  {
-    id: 7,
-    name: "East Entrance",
-    zone: "Zone G",
-    status: "online",
-    alertLevel: "normal",
-    occupancy: 234,
-    capacity: 500,
-    recording: true,
-    hasAudio: false,
-    ptz: true,
-    lastMotion: "23 sec ago",
-    resolution: "1080p",
-    fps: 24,
-  },
-  {
-    id: 8,
-    name: "VIP Lounge",
-    zone: "Zone H",
-    status: "offline",
-    alertLevel: "warning",
-    occupancy: 0,
-    capacity: 100,
-    recording: false,
-    hasAudio: true,
-    ptz: true,
-    lastMotion: "N/A",
-    resolution: "4K",
-    fps: 30,
-  },
-  {
-    id: 9,
-    name: "Loading Dock",
-    zone: "Zone I",
-    status: "online",
-    alertLevel: "normal",
-    occupancy: 8,
-    capacity: 30,
-    recording: true,
-    hasAudio: false,
-    ptz: false,
-    lastMotion: "3 min ago",
-    resolution: "720p",
-    fps: 24,
-  },
-  {
-    id: 10,
-    name: "Control Room",
-    zone: "Zone J",
-    status: "online",
-    alertLevel: "normal",
-    occupancy: 4,
-    capacity: 10,
-    recording: true,
-    hasAudio: true,
-    ptz: false,
-    lastMotion: "Just now",
-    resolution: "4K",
-    fps: 30,
-  },
-  {
-    id: 11,
-    name: "West Entrance",
-    zone: "Zone K",
-    status: "online",
-    alertLevel: "normal",
-    occupancy: 189,
-    capacity: 400,
-    recording: true,
-    hasAudio: true,
-    ptz: true,
-    lastMotion: "8 sec ago",
-    resolution: "4K",
-    fps: 30,
-  },
-  {
-    id: 12,
-    name: "Merchandise Area",
-    zone: "Zone L",
-    status: "offline",
-    alertLevel: "warning",
-    occupancy: 0,
-    capacity: 200,
-    recording: false,
-    hasAudio: false,
-    ptz: false,
-    lastMotion: "N/A",
-    resolution: "1080p",
-    fps: 30,
-  },
-];
+  };
+
+  return {
+    id: feed.id,
+    cameraId: feed.cameraId,
+    name: feed.name,
+    zone: feed.zone,
+    status: feed.status === "offline" || feed.isLive === false ? "offline" : "online",
+    alertLevel: feed.status === "alert" ? "alert" : feed.status === "warning" ? "warning" : "normal",
+    occupancy: feed.occupancy,
+    capacity: feed.capacity,
+    imageUrl: feed.imageUrl,
+    ...traits,
+  };
+}
 
 type LayoutType = "2x2" | "3x3" | "4x4";
 
@@ -232,9 +110,8 @@ const layoutOptions: {
 
 export default function CameraFeedsPage() {
   const [layout, setLayout] = useState<LayoutType>("3x3");
-  const [selectedCamera, setSelectedCamera] = useState<
-    (typeof allCameras)[0] | null
-  >(null);
+  const [allCameras, setAllCameras] = useState<DemoCamera[]>([]);
+  const [selectedCamera, setSelectedCamera] = useState<DemoCamera | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<
     "all" | "online" | "offline" | "alert"
@@ -244,9 +121,7 @@ export default function CameraFeedsPage() {
   const [isPaused, setIsPaused] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [cameraStates, setCameraStates] = useState<
-    Record<number, { occupancy: number }>
-  >({});
+  const [feedLoadError, setFeedLoadError] = useState<string | null>(null);
 
   // Update time
   useEffect(() => {
@@ -254,30 +129,36 @@ export default function CameraFeedsPage() {
     return () => clearInterval(timer);
   }, []);
 
-  // Simulate camera data updates
   useEffect(() => {
-    const interval = setInterval(() => {
-      const updates: Record<number, { occupancy: number }> = {};
-      allCameras.forEach((cam) => {
-        if (cam.status === "online") {
-          const baseOccupancy = cam.occupancy;
-          const fluctuation = Math.floor(Math.random() * 20) - 10;
-          updates[cam.id] = {
-            occupancy: Math.max(
-              0,
-              Math.min(cam.capacity, baseOccupancy + fluctuation),
-            ),
-          };
+    let mounted = true;
+
+    const fetchFeeds = async () => {
+      try {
+        const response = await fetch("/api/feed", { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error("Failed to fetch feeds");
         }
-      });
-      setCameraStates(updates);
-    }, 3000);
-    return () => clearInterval(interval);
+
+        const payload: FeedApiResponse = await response.json();
+        if (!mounted) return;
+        setAllCameras((payload.feeds ?? []).map(toDemoCamera));
+        setFeedLoadError(null);
+      } catch (error) {
+        console.warn("[demo/cameras] failed to load /api/feed", error);
+        if (!mounted) return;
+        setFeedLoadError("Unable to load live feed data.");
+      }
+    };
+
+    void fetchFeeds();
+    const interval = setInterval(fetchFeeds, 3000);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
-  const getCameraOccupancy = (camera: (typeof allCameras)[0]) => {
-    return cameraStates[camera.id]?.occupancy ?? camera.occupancy;
-  };
+  const getCameraOccupancy = (camera: DemoCamera) => camera.occupancy;
 
   const filteredCameras = allCameras.filter((camera) => {
     const matchesSearch =
@@ -452,6 +333,12 @@ export default function CameraFeedsPage() {
         </div>
       </div>
 
+      {feedLoadError && (
+        <div className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-xs text-amber-300">
+          {feedLoadError}
+        </div>
+      )}
+
       {/* Camera Grid */}
       <div className={`grid ${getGridCols()} gap-3 flex-1 overflow-auto`}>
         {displayedCameras.map((camera) => {
@@ -462,7 +349,7 @@ export default function CameraFeedsPage() {
 
           return (
             <motion.div
-              key={camera.id}
+              key={camera.cameraId}
               layout
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -476,7 +363,7 @@ export default function CameraFeedsPage() {
                 {camera.status === "online" ? (
                   <>
                     <Image
-                      src={`/images/surveillance-${((camera.id - 1) % 6) + 1}.jpg`}
+                      src={camera.imageUrl}
                       alt={camera.name}
                       fill
                       className="object-cover"
@@ -503,7 +390,7 @@ export default function CameraFeedsPage() {
                       className={`w-2 h-2 rounded-full ${getAlertColor(camera.alertLevel)} animate-pulse`}
                     />
                     <span className="text-xs font-mono font-medium bg-black/60 px-2 py-1 rounded">
-                      CAM-{camera.id.toString().padStart(2, "0")}
+                      {camera.cameraId}
                     </span>
                     {camera.recording && camera.status === "online" && (
                       <span className="flex items-center gap-1 text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded">
@@ -664,7 +551,7 @@ export default function CameraFeedsPage() {
                       className={`w-2.5 h-2.5 rounded-full ${getAlertColor(selectedCamera.alertLevel)} animate-pulse`}
                     />
                     <span className="font-mono font-medium">
-                      CAM-{selectedCamera.id.toString().padStart(2, "0")}
+                      {selectedCamera.cameraId}
                     </span>
                   </div>
                   <div className="h-4 w-px bg-slate-700" />
@@ -706,7 +593,7 @@ export default function CameraFeedsPage() {
                     style={{ transform: `scale(${zoomLevel})` }}
                   >
                     <Image
-                      src={`/images/surveillance-${((selectedCamera.id - 1) % 6) + 1}.jpg`}
+                      src={selectedCamera.imageUrl}
                       alt={selectedCamera.name}
                       fill
                       className="object-cover"

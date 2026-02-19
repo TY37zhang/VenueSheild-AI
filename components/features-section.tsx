@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const AnimatedAlertDemo = ({ isActive }: { isActive: boolean }) => {
   const [alerts, setAlerts] = useState([
@@ -13,7 +14,7 @@ const AnimatedAlertDemo = ({ isActive }: { isActive: boolean }) => {
   useEffect(() => {
     if (!isActive) return;
 
-    alerts.forEach((_, index) => {
+    [0, 1, 2].forEach((index) => {
       setTimeout(
         () => {
           setAlerts((prev) =>
@@ -74,7 +75,7 @@ const AnimatedScoreDemo = ({ isActive }: { isActive: boolean }) => {
       { safety: 94, ambiance: 88 },
     ];
 
-    scores.forEach((_, index) => {
+    targets.forEach((_, index) => {
       const interval = setInterval(() => {
         setScores((prev) =>
           prev.map((score, i) => {
@@ -316,7 +317,7 @@ const AnimatedComplianceDemo = ({ isActive }: { isActive: boolean }) => {
   useEffect(() => {
     if (!isActive) return;
 
-    items.forEach((_, index) => {
+    [0, 1, 2, 3].forEach((index) => {
       setTimeout(
         () => {
           setItems((prev) =>
@@ -399,7 +400,7 @@ const AnimatedCameraDemo = ({ isActive }: { isActive: boolean }) => {
   useEffect(() => {
     if (!isActive) return;
 
-    cameras.forEach((_, index) => {
+    [0, 1, 2, 3, 4, 5].forEach((index) => {
       setTimeout(
         () => {
           setCameras((prev) =>
@@ -443,10 +444,11 @@ const AnimatedCameraDemo = ({ isActive }: { isActive: boolean }) => {
           >
             {cam.status === "online" ? (
               <>
-                <img
+                <Image
                   src={cameraImages[index] || "/placeholder.svg"}
                   alt={`Camera ${cam.id} feed`}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
                 <div className="absolute top-0.5 left-0.5 flex items-center gap-0.5 bg-black/60 px-1 py-0.5 rounded">
                   <div className="w-1 h-1 bg-red-500 rounded-full animate-pulse" />
@@ -485,7 +487,7 @@ const AnimatedPrivacyDemo = ({ isActive }: { isActive: boolean }) => {
   useEffect(() => {
     if (!isActive) return;
 
-    features.forEach((_, index) => {
+    [0, 1, 2, 3, 4].forEach((index) => {
       setTimeout(
         () => {
           setFeatures((prev) =>
@@ -589,6 +591,7 @@ export function FeaturesSection() {
   const [activeDemo, setActiveDemo] = useState<number | null>(null);
 
   useEffect(() => {
+    const currentSection = sectionRef.current;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -601,13 +604,13 @@ export function FeaturesSection() {
       },
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+    if (currentSection) {
+      observer.observe(currentSection);
     }
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
+      if (currentSection) {
+        observer.unobserve(currentSection);
       }
     };
   }, []);

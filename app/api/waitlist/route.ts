@@ -1,17 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sql, initWaitlistTable, addToWaitlist } from "@/lib/db";
-
-// Initialize table on first request
-let tableInitialized = false;
+import { addToWaitlist, getWaitlistCount } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
   try {
-    // Initialize table if not done yet
-    if (!tableInitialized) {
-      await initWaitlistTable();
-      tableInitialized = true;
-    }
-
     const body = await request.json();
     const { name, email, company, venueType, message } = body;
 
@@ -32,7 +23,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Add to waitlist
     const result = await addToWaitlist({
       name,
       email,
@@ -52,12 +42,18 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Waitlist submission error:", error);
 
-    // Check for unique constraint violation (duplicate email)
-    if (error instanceof Error && error.message.includes("duplicate")) {
-      return NextResponse.json(
-        { error: "This email is already on the waitlist" },
-        { status: 409 },
-      );
+    if (error instanceof Error) {
+      // Supabase unique constraint error handling
+      if (
+        error.message.includes("duplicate") ||
+        error.message.includes("unique constraint") ||
+        error.message.includes("violates unique")
+      ) {
+        return NextResponse.json(
+          { error: "This email is already on the waitlist" },
+          { status: 409 },
+        );
+      }
     }
 
     return NextResponse.json(
@@ -67,16 +63,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Optional: GET endpoint to check waitlist count (for admin purposes)
+// GET endpoint to check waitlist count (for admin purposes)
 export async function GET() {
   try {
-    if (!tableInitialized) {
-      await initWaitlistTable();
-      tableInitialized = true;
-    }
-
-    const result = await sql`SELECT COUNT(*) as count FROM waitlist`;
-    return NextResponse.json({ count: result[0].count });
+    const count = await getWaitlistCount();
+    return NextResponse.json({ count });
   } catch (error) {
     console.error("Waitlist count error:", error);
     return NextResponse.json(

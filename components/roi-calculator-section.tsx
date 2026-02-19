@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Slider } from "@/components/ui/slider";
 import {
   Select,
@@ -49,7 +49,7 @@ export function ROICalculatorSection() {
     return () => observer.disconnect();
   }, []);
 
-  const getVenueDefaults = () => {
+  const getVenueDefaults = useCallback(() => {
     const venueDefaults = {
       arena: {
         incidentCost: 50000,
@@ -106,7 +106,7 @@ export function ROICalculatorSection() {
       venueDefaults[inputs.venueType as keyof typeof venueDefaults] ||
       venueDefaults.default
     );
-  };
+  }, [inputs.venueType]);
 
   useEffect(() => {
     const defaults = getVenueDefaults();
@@ -114,7 +114,7 @@ export function ROICalculatorSection() {
       ...prev,
       averageIncidentCost: defaults.incidentCost,
     }));
-  }, [inputs.venueType]);
+  }, [getVenueDefaults]);
 
   const venueConfig = getVenueDefaults();
   const improvements = {

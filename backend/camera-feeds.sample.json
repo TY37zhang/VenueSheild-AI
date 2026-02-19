@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "cameraId": "CAM-201",
+    "name": "North Gate",
+    "zone": "Zone A",
+    "status": "normal",
+    "sourceType": "remote-stream",
+    "occupancy": 42,
+    "capacity": 120,
+    "imageUrl": "https://cdn.example.com/cam-201/latest.jpg",
+    "streamUrl": "https://stream.example.com/cam-201/index.m3u8",
+    "isLive": true
+  },
+  {
+    "id": 202,
+    "cameraId": "CAM-202",
+    "name": "South Concourse",
+    "zone": "Zone B",
+    "status": "warning",
+    "sourceType": "remote-stream",
+    "occupancy": 96,
+    "capacity": 120,
+    "imageUrl": "https://cdn.example.com/cam-202/latest.jpg",
+    "streamUrl": "https://stream.example.com/cam-202/index.m3u8",
+    "isLive": true
+  }
+]
