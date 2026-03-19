@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import RotatingText from "./RotatingText";
 import Link from "next/link";
 
 const ArrowRight = () => (
@@ -30,28 +29,10 @@ export function HeroSection() {
 
         {/* Main Heading - Updated heading for VenueShield AI */}
         <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-balance mb-6 animate-fade-in-heading">
-          <span className="text-foreground">Protect Your</span>
+          <span className="text-foreground">Protect Your Venue with</span>
           <br />
-          <span className="inline-flex items-center justify-center gap-2 mt-4 sm:mt-6 md:mt-8 whitespace-nowrap">
-            <span className="text-foreground">Venue with</span>
-            <RotatingText
-              texts={[
-                "AI Safety",
-                "Real-Time Alerts",
-                "Smart Analytics",
-                "Risk Detection",
-                "Compliance",
-              ]}
-              mainClassName="px-2 sm:px-2 md:px-3 bg-white text-black overflow-hidden py-1 sm:py-1 md:py-2 justify-center rounded-lg shadow-lg whitespace-nowrap"
-              staggerFrom={"last"}
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "-120%" }}
-              staggerDuration={0.025}
-              splitLevelClassName="overflow-hidden pb-1 sm:pb-1 md:pb-1"
-              transition={{ type: "spring", damping: 30, stiffness: 400 }}
-              rotationInterval={2000}
-            />
+          <span className="mt-4 sm:mt-6 md:mt-8 text-white">
+            AI Safety & Real-Time Intelligence
           </span>
         </h1>
 
